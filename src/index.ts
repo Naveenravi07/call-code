@@ -6,11 +6,10 @@ const PORT = 8000
 const app : Application  = express()
 
 
-
 app.use(zodMiddleWare)
 
-app.listen(PORT,()=>{
 
+app.listen(PORT,()=>{
     client.connect()
     .then(()=>console.log("Database connected successfully"))
     .catch((err)=>console.log("Database connection failed",err))
