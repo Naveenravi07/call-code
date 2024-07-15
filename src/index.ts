@@ -1,11 +1,12 @@
 import express, {Application} from "express"
 import { zodMiddleWare } from "./middlewares/zod.middleware"
 import { client } from "./database/db"
+import authRouter from "./routes/auth.route"
 
 const PORT = 8000
 const app : Application  = express()
 
-
+app.use('/auth',authRouter)
 app.use(zodMiddleWare)
 
 
