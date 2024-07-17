@@ -1,8 +1,10 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import cookie from "cookie"
 import { v4 as uuid } from "uuid"
 import passport from "passport";
 import { Strategy as OpenIDConnectStrategy, Profile, VerifyCallback } from "passport-openidconnect";
+import { getOIDC_Credentials, saveOIDC_Credentials } from "$/services/oidc.service";
+
 require('dotenv').config()
 
 const clientId = process.env['AUTH0_CLIENT_ID'] ?? "";
@@ -21,29 +23,39 @@ passport.use(new OpenIDConnectStrategy(
         userInfoURL: `https://${auth0Domain}/userinfo`,
         clientID: clientId,
         clientSecret: clientSecret,
-        callbackURL: '/oauth2/cb',
+        callbackURL: '/auth/oauth2/cb',
         scope: ['profile'],
     },
-    function verify(issuer: string, profile: Profile, cb: VerifyCallback) {
+    function verify(_issuer: string, profile: Profile, cb: VerifyCallback) {
         return cb(null, profile);
     }
 ));
 
-async function loginController(req: Request, res: Response) {
+async function loginController(req: Request, res: Response, next: NextFunction) {
     const cookies = cookie.parse(req.headers.cookie || '')
     const sessionId = cookies?.sessionId || uuid()
     const nonce = uuid()
-    const key = `${sessionId}:${nonce}`
-    passport.authenticate('openidconnect', { scope: 'openid profile' })(req, res);
+
+    if (await getOIDC_Credentials(sessionId) == null) {
+        await saveOIDC_Credentials(sessionId, nonce)
+    }
+
+    res.cookie('sessionId', sessionId, { httpOnly: true, maxAge: 1000 * 60 * 5, })
+    passport.authenticate('openidconnect', { scope: 'openidconnect', state: nonce })(req, res, next);
 }
 
-async function authCallBackController(req: Request, res: Response) {
+async function authCallBackController(req: Request, res: Response, next: NextFunction) {
+    const cookies = cookie.parse(req.headers.cookie || '')
+    const sessionId = cookies?.sessionId
+    const OIDC_CREDS = await getOIDC_Credentials(sessionId)
+
     passport.authenticate('openidconnect', {
         successRedirect: '/',
-        failureRedirect: '/login',
-        scope: 'openidconnect'
-    })
+        failureRedirect: '/auth/login',
+        scope: 'openidconnect',
+        state: OIDC_CREDS?.value
+    })(req, res, next)
 }
 
 
-export { loginController, authCallBackController }
+export { loginController, authCallBackController, passport }
