@@ -5,6 +5,7 @@
         ]
     },
     "compilerOptions": {
+        //"typeRoots": ["@types"],
         "target": "ES2016",
         "module": "commonjs",
         "outDir": "dist",

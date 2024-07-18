@@ -3,7 +3,6 @@ import { zodMiddleWare } from "./middlewares/zod.middleware"
 import session from 'express-session'
 import { client } from "./database/db"
 import authRouter from "./routes/auth.route"
-import {passport} from "./controllers/auth.controller"
 
 const PORT = 8000
 const app: Application = express()
@@ -15,18 +14,11 @@ app.use(session({
     cookie: { secure: false } // Set to true if using HTTPS
 }));
 
-app.use(passport.initialize())
-app.use(passport.session())
-
-passport.serializeUser((user: Express.User, done) => done(null, user));
-passport.deserializeUser((user: Express.User, done) => done(null, user));
-
 
 app.get('/', (req, res) => {
-    res.clearCookie("sessionId")
+    console.log(req.session)
     res.send("Hello ")
 })
-
 app.use('/auth', authRouter)
 
 
