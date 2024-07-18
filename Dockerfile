@@ -1,4 +1,5 @@
 FROM node:20.10.0-alpine
+#Setting env is must as db connection and many internals relay on this
 ENV NODE_ENV=production
 
 WORKDIR /app
