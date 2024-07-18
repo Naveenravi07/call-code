@@ -1,7 +1,7 @@
 import { defineConfig } from 'drizzle-kit';
 
 export default defineConfig({
-  schema: './src/database/schema/oidc_state.model.ts',
+  schema: './src/database/schema',
   out: './migrations',
   dialect: 'postgresql', 
 });

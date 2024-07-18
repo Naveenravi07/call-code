@@ -1,10 +1,10 @@
+import { User } from "$/database/schema/user.schema";
+import { createNewUser, getUserDetailsFromEmail } from "$/services/user.service";
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth2";
+import { v4 as uuidv4 } from "uuid";
 
-const serverUrl =
-    process.env.NODE_ENV === "production"
-        ? process.env.SERVER_URL_PROD
-        : process.env.SERVER_URL_DEV;
+const serverUrl = process.env.NODE_ENV === 'production' ? process.env.SERVER_PROD_URL : process.env.SERVER_DEV_URL;
 
 const clientId = process.env.GOOGLE_AUTH_CLIENT_ID ?? "";
 const clientSecret = process.env.GOOGLE_AUTH_CLIENT_SECRET ?? "";
@@ -13,9 +13,25 @@ const googleLogin = new GoogleStrategy(
     {
         clientID: clientId,
         clientSecret: clientSecret,
-        callbackURL : "/auth/google/redirect"
+        callbackURL : `${serverUrl}auth/google/cb`,
     },
-    async (accessToken: any, refreshToken: any, profile: any, done: any) => { }
+    async function verify(accessToken: any, refreshToken: any, profile: any, done: any) {
+        let prevUser = await getUserDetailsFromEmail(profile.email)
+        if(prevUser){
+            return done(null,prevUser)
+        }
+        let newUser : User = {
+            id: uuidv4(),
+            provider:"google",
+            pwd: null,
+            name:profile._json.name,
+            email:profile._json.email,
+            pfp:profile._json.picture,
+            providerid:profile._json.sub
+        } 
+        await createNewUser(newUser)
+        done(null,newUser)
+    }
 );
 
 passport.use(googleLogin);

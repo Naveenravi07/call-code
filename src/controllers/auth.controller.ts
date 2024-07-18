@@ -1,19 +1,21 @@
 import { NextFunction, Request, Response } from "express";
-import cookie from "cookie"
-import { v4 as uuid } from "uuid"
+import passport from "passport";
 
 require('dotenv').config()
 
-async function loginController(req: Request, res: Response, next: NextFunction) {
-
+async function googleLoginController(req: Request, res: Response, next: NextFunction) {
+    passport.authenticate('google', {
+        scope: ['profile', 'email'],
+      })(req,res,next)
 }
 
-async function authCallBackController(req: Request, res: Response, next: NextFunction) {
-
+async function googleLoginCBController(req: Request, res: Response, next: NextFunction) {
+    passport.authenticate('google', {
+        failureRedirect: '/failed',
+        successRedirect:"/",
+        session: false,
+      })(req,res,next)
 }
 
-async function getProfileController(req:Request,res:Response) {
 
-}
-
-export {loginController, authCallBackController, getProfileController }
+export {googleLoginController, googleLoginCBController }
