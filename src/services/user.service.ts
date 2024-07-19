@@ -4,19 +4,17 @@ import { eq } from "drizzle-orm";
 
 async function getUserDetailsFromEmail(email:string){
     let data = await db.select().from(userTable).where(eq(userTable.email,email)).limit(1)
-    if(data.length == 0 ) return null
-    return data[0]
+    return data.at(0) || null;
 }
 
 async function createNewUser(user:User){
     let insert = await db.insert(userTable).values(user).returning()
-    return insert[0]
+    return insert.at(0) || null;
 }
 
 async function getUserById(id:string){
     let user = await db.select().from(userTable).where(eq(userTable.id,id)).limit(1)
-    if(user.length == 0 ) return null
-    return user[0]
+    return user.at(0) || null;
 }
 
 export {getUserDetailsFromEmail,createNewUser,getUserById}
