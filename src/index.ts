@@ -27,7 +27,6 @@ import "./passport/googleStrategy"
 
 //Routes
 app.get('/', (req, res) => {
-    console.log(req.user)
     res.send('<a href="/auth/google/login">Authenticate with google</a>') 
 })
 app.use('/auth', authRouter)

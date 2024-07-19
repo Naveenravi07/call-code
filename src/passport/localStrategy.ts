@@ -9,7 +9,7 @@ const serverUrl = process.env.NODE_ENV === 'production' ? process.env.SERVER_PRO
 const clientId = process.env.GOOGLE_AUTH_CLIENT_ID ?? "";
 const clientSecret = process.env.GOOGLE_AUTH_CLIENT_SECRET ?? "";
 
-passport.serializeUser(function (user:Express.User, cb) {
+passport.serializeUser(function (user:any, cb) {
     process.nextTick(function () {
       return cb(null, user.id);
     });

@@ -12,9 +12,13 @@ async function googleLoginController(req: Request, res: Response, next: NextFunc
 async function googleLoginCBController(req: Request, res: Response, next: NextFunction) {
     passport.authenticate('google', {
         failureRedirect: '/auth/google/err',
-        successRedirect:"/",
+        successRedirect:"/auth/success",
       })(req,res,next)
 }
 
+async function authSuccessController(req:Request,res:Response){
+  res.cookie('x-auth-cookie',req.user?.id)
+  res.send("Success")
+}
 
-export {googleLoginController, googleLoginCBController }
+export {googleLoginController, googleLoginCBController,authSuccessController }
