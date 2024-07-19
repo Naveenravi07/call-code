@@ -1,5 +1,5 @@
 import { User } from "$/database/schema/user.schema";
-import { createNewUser, getUserDetailsFromEmail } from "$/services/user.service";
+import { createNewUser, getUserById, getUserDetailsFromEmail } from "$/services/user.service";
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth2";
 import { v4 as uuidv4 } from "uuid";
@@ -9,6 +9,23 @@ const serverUrl = process.env.NODE_ENV === 'production' ? process.env.SERVER_PRO
 const clientId = process.env.GOOGLE_AUTH_CLIENT_ID ?? "";
 const clientSecret = process.env.GOOGLE_AUTH_CLIENT_SECRET ?? "";
 
+passport.serializeUser(function (user:any, cb) {
+    process.nextTick(function () {
+      return cb(null, user.id);
+    });
+  });
+  
+  passport.deserializeUser(async function (id:string, cb) {
+    process.nextTick(async function () {
+        let user = await getUserById(id)
+        if(user){
+            return cb(null,user)
+        }
+        cb(null)
+    });
+  });
+
+  
 const googleLogin = new GoogleStrategy(
     {
         clientID: clientId,
@@ -16,6 +33,7 @@ const googleLogin = new GoogleStrategy(
         callbackURL : `${serverUrl}auth/google/cb`,
     },
     async function verify(accessToken: any, refreshToken: any, profile: any, done: any) {
+       try{
         let prevUser = await getUserDetailsFromEmail(profile.email)
         if(prevUser){
             return done(null,prevUser)
@@ -30,8 +48,10 @@ const googleLogin = new GoogleStrategy(
             providerid:profile._json.sub
         } 
         await createNewUser(newUser)
-        done(null,newUser)
+        return done(null,newUser)
+       }catch(err){ 
+        console.log(err)
+       }
     }
 );
-
-passport.use(googleLogin);
+export default passport.use(googleLogin);

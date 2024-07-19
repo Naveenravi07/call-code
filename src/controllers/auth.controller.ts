@@ -11,9 +11,8 @@ async function googleLoginController(req: Request, res: Response, next: NextFunc
 
 async function googleLoginCBController(req: Request, res: Response, next: NextFunction) {
     passport.authenticate('google', {
-        failureRedirect: '/failed',
+        failureRedirect: '/auth/google/err',
         successRedirect:"/",
-        session: false,
       })(req,res,next)
 }
 

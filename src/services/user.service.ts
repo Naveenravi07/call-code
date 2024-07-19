@@ -13,4 +13,10 @@ async function createNewUser(user:User){
     return insert[0]
 }
 
-export {getUserDetailsFromEmail,createNewUser}
+async function getUserById(id:string){
+    let user = await db.select().from(userTable).where(eq(userTable.id,id)).limit(1)
+    if(user.length == 0 ) return null
+    return user[0]
+}
+
+export {getUserDetailsFromEmail,createNewUser,getUserById}
