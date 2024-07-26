@@ -1,20 +1,14 @@
-import { User } from "$/database/schema/user.schema";
-import {
-  createNewUser,
-  findUserWithProvider,
-  getUserById,
-} from "$/services/user.service";
-import passport from "passport";
-import { Strategy as GithubStrategy } from "passport-github2";
-import { v4 as uuidv4 } from "uuid";
+import { User } from '$/database/schema/user.schema';
+import { createNewUser, findUserWithProvider, getUserById } from '$/services/user.service';
+import passport from 'passport';
+import { Strategy as GithubStrategy } from 'passport-github2';
+import { v4 as uuidv4 } from 'uuid';
 
 const serverUrl =
-  process.env.NODE_ENV === "production"
-    ? process.env.SERVER_PROD_URL
-    : process.env.SERVER_DEV_URL;
+  process.env.NODE_ENV === 'production' ? process.env.SERVER_PROD_URL : process.env.SERVER_DEV_URL;
 
-let GH_CLIENTID = process.env.GITHUB_CLIENTID ?? "";
-let GH_CLIENTSEC = process.env.GITHUB_CLIENT_SECRET ?? "";
+let GH_CLIENTID = process.env.GITHUB_CLIENTID ?? '';
+let GH_CLIENTSEC = process.env.GITHUB_CLIENT_SECRET ?? '';
 
 passport.serializeUser(function (user: Express.User, cb) {
   process.nextTick(function () {
@@ -38,21 +32,16 @@ let githubLogin = new GithubStrategy(
     clientSecret: GH_CLIENTSEC,
     callbackURL: `${serverUrl}auth/github/cb`,
   },
-  async function (
-    accessToken: any,
-    refreshToken: any,
-    profile: any,
-    done: any,
-  ) {
+  async function (accessToken: any, refreshToken: any, profile: any, done: any) {
     try {
       console.log(profile);
-      let prevuser = await findUserWithProvider(profile._json.id, "github");
+      let prevuser = await findUserWithProvider(profile._json.id, 'github');
       if (prevuser) {
         return done(null, prevuser);
       }
       let newUser: User = {
         id: uuidv4(),
-        provider: "github",
+        provider: 'github',
         pwd: null,
         providerid: profile._json.id,
         pfp: profile._json.avatar_url,

@@ -1,20 +1,14 @@
-import { User } from "$/database/schema/user.schema";
-import {
-  createNewUser,
-  getUserById,
-  getUserDetailsFromEmail,
-} from "$/services/user.service";
-import passport from "passport";
-import { Strategy as GoogleStrategy } from "passport-google-oauth2";
-import { v4 as uuidv4 } from "uuid";
+import { User } from '$/database/schema/user.schema';
+import { createNewUser, getUserById, getUserDetailsFromEmail } from '$/services/user.service';
+import passport from 'passport';
+import { Strategy as GoogleStrategy } from 'passport-google-oauth2';
+import { v4 as uuidv4 } from 'uuid';
 
 const serverUrl =
-  process.env.NODE_ENV === "production"
-    ? process.env.SERVER_PROD_URL
-    : process.env.SERVER_DEV_URL;
+  process.env.NODE_ENV === 'production' ? process.env.SERVER_PROD_URL : process.env.SERVER_DEV_URL;
 
-const clientId = process.env.GOOGLE_AUTH_CLIENT_ID ?? "";
-const clientSecret = process.env.GOOGLE_AUTH_CLIENT_SECRET ?? "";
+const clientId = process.env.GOOGLE_AUTH_CLIENT_ID ?? '';
+const clientSecret = process.env.GOOGLE_AUTH_CLIENT_SECRET ?? '';
 
 passport.serializeUser(function (user: Express.User, cb) {
   process.nextTick(function () {
@@ -38,12 +32,7 @@ const googleLogin = new GoogleStrategy(
     clientSecret: clientSecret,
     callbackURL: `${serverUrl}auth/google/cb`,
   },
-  async function verify(
-    accessToken: any,
-    refreshToken: any,
-    profile: any,
-    done: any,
-  ) {
+  async function verify(accessToken: any, refreshToken: any, profile: any, done: any) {
     try {
       let prevUser = await getUserDetailsFromEmail(profile.email);
       if (prevUser) {
@@ -51,7 +40,7 @@ const googleLogin = new GoogleStrategy(
       }
       let newUser: User = {
         id: uuidv4(),
-        provider: "google",
+        provider: 'google',
         pwd: null,
         name: profile._json.name,
         email: profile._json.email,

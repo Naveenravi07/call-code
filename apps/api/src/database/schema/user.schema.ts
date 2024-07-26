@@ -1,17 +1,17 @@
-import { text, pgTable, uuid, pgEnum } from "drizzle-orm/pg-core";
-import { number } from "zod";
+import { text, pgTable, uuid, pgEnum } from 'drizzle-orm/pg-core';
+import { number } from 'zod';
 
-export const providers = ["google", "github"] as const;
-export const pg_provider = pgEnum("provider", providers);
+export const providers = ['google', 'github'] as const;
+export const pg_provider = pgEnum('provider', providers);
 
-export var userTable = pgTable("users", {
-  id: uuid("id").primaryKey(),
-  name: text("name").notNull(),
-  pwd: text("pwd"),
-  provider: pg_provider("provider").notNull(),
-  providerid: text("p_id").notNull(),
-  email: text("email"),
-  pfp: text("pfp"),
+export var userTable = pgTable('users', {
+  id: uuid('id').primaryKey(),
+  name: text('name').notNull(),
+  pwd: text('pwd'),
+  provider: pg_provider('provider').notNull(),
+  providerid: text('p_id').notNull(),
+  email: text('email'),
+  pfp: text('pfp'),
 });
 
 export type User = typeof userTable.$inferSelect;

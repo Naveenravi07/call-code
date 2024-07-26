@@ -1,5 +1,5 @@
-import { NextFunction, Request, Response } from "express";
-import { z } from "zod";
+import { NextFunction, Request, Response } from 'express';
+import { z } from 'zod';
 
 export function zodMiddleWare(
   err: unknown,
@@ -20,6 +20,6 @@ export function zodMiddleWare(
     return;
   }
   res.status(500).json({
-    message: "Internal server error",
+    message: 'Internal server error',
   });
 }
