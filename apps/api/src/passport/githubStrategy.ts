@@ -7,8 +7,8 @@ import { v4 as uuidv4 } from 'uuid';
 const serverUrl =
   process.env.NODE_ENV === 'production' ? process.env.SERVER_PROD_URL : process.env.SERVER_DEV_URL;
 
-let GH_CLIENTID = process.env.GITHUB_CLIENTID ?? '';
-let GH_CLIENTSEC = process.env.GITHUB_CLIENT_SECRET ?? '';
+const GH_CLIENTID = process.env.GITHUB_CLIENTID ?? '';
+const GH_CLIENTSEC = process.env.GITHUB_CLIENT_SECRET ?? '';
 
 passport.serializeUser(function (user: Express.User, cb) {
   process.nextTick(function () {
@@ -18,7 +18,7 @@ passport.serializeUser(function (user: Express.User, cb) {
 
 passport.deserializeUser(async function (id: string, cb) {
   process.nextTick(async function () {
-    let user = await getUserById(id);
+    const user = await getUserById(id);
     if (user) {
       return cb(null, user);
     }
@@ -26,20 +26,21 @@ passport.deserializeUser(async function (id: string, cb) {
   });
 });
 
-let githubLogin = new GithubStrategy(
+const githubLogin = new GithubStrategy(
   {
     clientID: GH_CLIENTID,
     clientSecret: GH_CLIENTSEC,
     callbackURL: `${serverUrl}auth/github/cb`,
   },
+  /* eslint-disable */
   async function (accessToken: any, refreshToken: any, profile: any, done: any) {
     try {
       console.log(profile);
-      let prevuser = await findUserWithProvider(profile._json.id, 'github');
+      const prevuser = await findUserWithProvider(profile._json.id, 'github');
       if (prevuser) {
         return done(null, prevuser);
       }
-      let newUser: User = {
+      const newUser: User = {
         id: uuidv4(),
         provider: 'github',
         pwd: null,
@@ -55,6 +56,7 @@ let githubLogin = new GithubStrategy(
       console.log(err);
     }
   },
+  /* eslint-enable */
 );
 
 export default passport.use(githubLogin);

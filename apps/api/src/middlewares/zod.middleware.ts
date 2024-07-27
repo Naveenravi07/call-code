@@ -1,12 +1,7 @@
-import { NextFunction, Request, Response } from 'express';
+import { Request, Response } from 'express';
 import { z } from 'zod';
 
-export function zodMiddleWare(
-  err: unknown,
-  _req: Request,
-  res: Response,
-  next: NextFunction,
-): void {
+export function zodMiddleWare(err: unknown, _req: Request, res: Response): void {
   if (err instanceof z.ZodError) {
     res.status(400).json({
       error: err.flatten(),

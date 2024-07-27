@@ -18,7 +18,7 @@ passport.serializeUser(function (user: Express.User, cb) {
 
 passport.deserializeUser(async function (id: string, cb) {
   process.nextTick(async function () {
-    let user = await getUserById(id);
+    const user = await getUserById(id);
     if (user) {
       return cb(null, user);
     }
@@ -32,13 +32,14 @@ const googleLogin = new GoogleStrategy(
     clientSecret: clientSecret,
     callbackURL: `${serverUrl}auth/google/cb`,
   },
+  /* eslint-disable */
   async function verify(accessToken: any, refreshToken: any, profile: any, done: any) {
     try {
-      let prevUser = await getUserDetailsFromEmail(profile.email);
+      const prevUser = await getUserDetailsFromEmail(profile.email);
       if (prevUser) {
         return done(null, prevUser);
       }
-      let newUser: User = {
+      const newUser: User = {
         id: uuidv4(),
         provider: 'google',
         pwd: null,
@@ -53,5 +54,6 @@ const googleLogin = new GoogleStrategy(
       console.log(err);
     }
   },
+  /* eslint-enable */
 );
 export default passport.use(googleLogin);

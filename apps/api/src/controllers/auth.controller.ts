@@ -1,8 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import passport from 'passport';
 
-require('dotenv').config();
-
 async function googleLoginController(req: Request, res: Response, next: NextFunction) {
   passport.authenticate('google', {
     scope: ['profile', 'email'],

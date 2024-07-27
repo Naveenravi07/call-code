@@ -1,10 +1,9 @@
 import { text, pgTable, uuid, pgEnum } from 'drizzle-orm/pg-core';
-import { number } from 'zod';
 
 export const providers = ['google', 'github'] as const;
 export const pg_provider = pgEnum('provider', providers);
 
-export var userTable = pgTable('users', {
+export const userTable = pgTable('users', {
   id: uuid('id').primaryKey(),
   name: text('name').notNull(),
   pwd: text('pwd'),
