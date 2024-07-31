@@ -1,6 +1,3 @@
-import {User,Providers} from "../database/schema/user.schema"
+import { User, Providers } from '../database/schema/user.schema';
 
-export {
-    User,
-    Providers
-}
+export { User, Providers };
