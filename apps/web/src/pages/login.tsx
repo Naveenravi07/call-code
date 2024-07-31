@@ -2,6 +2,7 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
+import { loginWithGithub, loginWithGoogle } from '@/apis/auth';
 
 export default function LoginPage() {
   return (
@@ -27,11 +28,25 @@ export default function LoginPage() {
         <div className="space-y-4">
           <Separator>or sign in with</Separator>
           <div className="flex flex-col gap-2">
-            <Button variant="outline" className="w-full">
+            <Button
+              onClick={() => {
+                console.log('Clicked');
+                loginWithGithub();
+              }}
+              variant="outline"
+              className="w-full"
+            >
               <GitlabIcon className="h-5 w-5 mr-2" />
               Sign in with GitHub
             </Button>
-            <Button variant="outline" className="w-full">
+            <Button
+              onClick={() => {
+                console.log('Clicked');
+                loginWithGoogle();
+              }}
+              variant="outline"
+              className="w-full"
+            >
               <ChromeIcon className="h-5 w-5 mr-2" />
               Sign in with Google
             </Button>

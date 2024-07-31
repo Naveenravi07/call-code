@@ -35,7 +35,6 @@ const githubLogin = new GithubStrategy(
   /* eslint-disable */
   async function (accessToken: any, refreshToken: any, profile: any, done: any) {
     try {
-      console.log(profile);
       const prevuser = await findUserWithProvider(profile._json.id, 'github');
       if (prevuser) {
         return done(null, prevuser);

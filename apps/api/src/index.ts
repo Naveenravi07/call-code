@@ -5,9 +5,12 @@ import authRouter from './routes/auth.route';
 import session from 'express-session';
 import passport from 'passport';
 import cookieparser from 'cookie-parser';
+import cors from 'cors';
 
 const PORT = 8000;
 const app: Application = express();
+
+app.use(cors({ origin: '*' }));
 
 app.use(cookieparser());
 app.use(

@@ -34,6 +34,7 @@
         "typescript": "^5.5.3"
     },
     "dependencies": {
+        "@types/cors": "^2.8.17",
         "cookie": "^0.6.0",
         "cookie-parser": "^1.4.6",
         "cors": "^2.8.5",
