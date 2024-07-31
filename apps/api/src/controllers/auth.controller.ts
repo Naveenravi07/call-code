@@ -2,7 +2,6 @@ import { NextFunction, Request, Response } from 'express';
 import passport from 'passport';
 
 async function googleLoginController(req: Request, res: Response, next: NextFunction) {
-  console.log(req.user);
   passport.authenticate('google', {
     scope: ['profile', 'email'],
   })(req, res, next);
@@ -34,6 +33,7 @@ async function authSuccessController(req: Request, res: Response) {
     (process.env.NODE_ENV === 'production'
       ? process.env.CLIENT_PROD_URL
       : process.env.CLIENT_DEV_URL) ?? 'http://localhost:';
+
   console.log('Auth Success Printing User Data', req.user);
   res.cookie('x-auth-cookie', req.user?.id);
   res.redirect(clienturl);
