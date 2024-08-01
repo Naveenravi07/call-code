@@ -10,5 +10,6 @@ authRouter.get('/github/login', authController.githubLoginController);
 authRouter.get('/github/cb', authController.githubLoginCBController);
 
 authRouter.get('/success', authController.authSuccessController);
+authRouter.get('/me',authController.getUserDetailsController)
 
 export default authRouter;
