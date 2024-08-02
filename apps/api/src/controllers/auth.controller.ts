@@ -1,3 +1,4 @@
+import { CustomError } from '$/classes/CustomError.class';
 import { NextFunction, Request, Response } from 'express';
 import passport from 'passport';
 async function googleLoginController(req: Request, res: Response, next: NextFunction) {
@@ -48,6 +49,16 @@ async function getUserDetailsController(req: Request, res: Response) {
   res.json(user ?? undefined).status(user ? 200 : 404);
 }
 
+async function logoutUserController(req: Request, res: Response) {
+  req.logout(function (err) {
+    if (err) {
+      throw new CustomError(400, err);
+    }
+    res.clearCookie('x-auth-cookie');
+    res.send('Ok').status(200);
+  });
+}
+
 export {
   googleLoginController,
   googleLoginCBController,
@@ -55,4 +66,5 @@ export {
   githubLoginController,
   githubLoginCBController,
   getUserDetailsController,
+  logoutUserController,
 };

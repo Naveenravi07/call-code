@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { logoutUser } from '@/apis/auth';
 import {
   Card,
   CardHeader,
@@ -26,18 +27,30 @@ import {
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
 import useAuth from '@/hooks/useAuth';
+import { useToast } from '@/components/ui/use-toast';
 
 export default function LandingPage() {
-  const { user, isLoading, isError, error } = useAuth();
-  console.log(user);
+  const { user, isLoading, isError, error, invalidate } = useAuth();
   const defaultPfpUrl =
     'https://t3.ftcdn.net/jpg/05/11/52/90/360_F_511529094_PISGWTmlfmBu1g4nocqdVKaHBnzMDWrN.jpg';
+  const { toast } = useToast();
 
   if (isLoading) return 'Loading';
-
   if (isError) {
     console.log(error);
     return 'Error occured';
+  }
+
+  function handleLogout() {
+    logoutUser()
+      .then(() => {
+        invalidate();
+      })
+      .catch(() => {
+        toast({
+          title: 'Logout failed',
+        });
+      });
   }
 
   return (
@@ -63,7 +76,11 @@ export default function LandingPage() {
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
-                  <Button variant="outline" className="block w-full text-left">
+                  <Button
+                    onClick={() => handleLogout()}
+                    variant="outline"
+                    className="block w-full text-left"
+                  >
                     Logout
                   </Button>
                 </DropdownMenuItem>
