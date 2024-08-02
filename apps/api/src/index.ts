@@ -10,7 +10,17 @@ import cors from 'cors';
 const PORT = 8000;
 const app: Application = express();
 
-app.use(cors({ origin: '*' }));
+const clienturl =
+  (process.env.NODE_ENV === 'production'
+    ? process.env.CLIENT_PROD_URL
+    : process.env.CLIENT_DEV_URL) ?? 'http://localhost:';
+
+app.use(
+  cors({
+    origin: clienturl,
+    credentials: true,
+  }),
+);
 
 app.use(cookieparser());
 app.use(

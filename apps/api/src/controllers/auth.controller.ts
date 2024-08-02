@@ -1,4 +1,5 @@
-import { NextFunction, Request, Response } from 'express'; import passport from 'passport';
+import { NextFunction, Request, Response } from 'express';
+import passport from 'passport';
 async function googleLoginController(req: Request, res: Response, next: NextFunction) {
   passport.authenticate('google', {
     scope: ['profile', 'email'],
@@ -37,13 +38,14 @@ async function authSuccessController(req: Request, res: Response) {
   res.redirect(clienturl);
 }
 
-
-async function getUserDetailsController(req: Request,res:Response){
-    let {user} = req
-    if(user == undefined){
-        res.clearCookie('x-auth-cookie')
-    }
-    res.json(user ?? undefined).status(user ? 200 : 404)
+async function getUserDetailsController(req: Request, res: Response) {
+  const { user } = req;
+  if (user == undefined) {
+    res.clearCookie('x-auth-cookie');
+  }
+  console.log(user);
+  res.setHeader('Access-Control-Allow-Credential', '*');
+  res.json(user ?? undefined).status(user ? 200 : 404);
 }
 
 export {
@@ -52,5 +54,5 @@ export {
   authSuccessController,
   githubLoginController,
   githubLoginCBController,
-  getUserDetailsController
+  getUserDetailsController,
 };

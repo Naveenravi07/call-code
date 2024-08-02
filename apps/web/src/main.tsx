@@ -8,26 +8,26 @@ import LandingPage from './pages/landing.tsx';
 import AuthSuccess from './pages/authsucess.tsx';
 
 const router = createBrowserRouter([
-    {
-        path: '/',
-        element: <LandingPage />,
-    },
-    {
-        path: '/login',
-        element: <LoginPage />,
-    },
-    {
-        path: '/auth/success',
-        element: <AuthSuccess />,
-    },
+  {
+    path: '/',
+    element: <LandingPage />,
+  },
+  {
+    path: '/login',
+    element: <LoginPage />,
+  },
+  {
+    path: '/auth/success',
+    element: <AuthSuccess />,
+  },
 ]);
 
 const queryClient = new QueryClient();
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-    <React.StrictMode>
-        <QueryClientProvider client={queryClient}>
-            <RouterProvider router={router} />
-        </QueryClientProvider>
-    </React.StrictMode>,
+  <React.StrictMode>
+    <QueryClientProvider client={queryClient}>
+      <RouterProvider router={router} />
+    </QueryClientProvider>
+  </React.StrictMode>,
 );
