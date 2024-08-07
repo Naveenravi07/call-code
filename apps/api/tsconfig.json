@@ -6,8 +6,10 @@
     },
     "compilerOptions": {
         "typeRoots": [
-            "@types"
+            "./node_modules/@types",
+            "./@types",
         ],
+        "types": ["jest","node"],
         "target": "ES2016",
         "module": "commonjs",
         "outDir": "dist",
@@ -26,6 +28,7 @@
     },
     "include": [
         "./src/**/*.ts",
-        ".eslintrc.cjs"
+        ".eslintrc.cjs",
+        "@types/**/*"
     ]
 }
