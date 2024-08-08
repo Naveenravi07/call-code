@@ -16,9 +16,7 @@ describe('zodMiddleWare', () => {
     });
 
     app.get('/test/othererror', (req: Request, res: Response, next: NextFunction) => {
-      const error = new Error('Some error') as Error & { statusCode?: number };
-      error.statusCode = 500;
-      next(new CustomError(500, 'Something happend'));
+      next(new CustomError(400, 'Something wrong'));
     });
 
     app.get('/test/unknownerror', (req: Request, res: Response, next: NextFunction) => {
@@ -38,8 +36,8 @@ describe('zodMiddleWare', () => {
 
   test('should handle other Error and respond with its status', async () => {
     const response = await request(app).get('/test/othererror');
-    expect(response.status).toBe(500);
-    expect(response.body).toHaveProperty('message', 'Something happend');
+    expect(response.status).toBe(400);
+    expect(response.body).toHaveProperty('message', 'Something wrong');
   });
 
   test('should handle unknown error and respond with 500 status', async () => {
