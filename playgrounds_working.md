@@ -3,6 +3,7 @@
 ## Overview
 
 This project implements an online IDE with isolated coding playgrounds. Each playground consists of two Docker containers:
+
 1. A WebSocket server for real-time code modifications
 2. A code execution environment
 
@@ -24,23 +25,27 @@ Each playground gets its own EFS file system for isolated storage.
 ```javascript
 async function createPlaygroundEFS() {
   const efs = new AWS.EFS();
-  const createFileSystemResult = await efs.createFileSystem({
-    PerformanceMode: 'generalPurpose',
-    ThroughputMode: 'bursting',
-    Encrypted: true,
-    Tags: [{ Key: 'Purpose', Value: 'CodePlayground' }]
-  }).promise();
+  const createFileSystemResult = await efs
+    .createFileSystem({
+      PerformanceMode: 'generalPurpose',
+      ThroughputMode: 'bursting',
+      Encrypted: true,
+      Tags: [{ Key: 'Purpose', Value: 'CodePlayground' }],
+    })
+    .promise();
 
   const fileSystemId = createFileSystemResult.FileSystemId;
 
   // Create mount targets in VPC subnets
   const subnets = ['subnet-xxxxx', 'subnet-yyyyy'];
   for (const subnetId of subnets) {
-    await efs.createMountTarget({
-      FileSystemId: fileSystemId,
-      SubnetId: subnetId,
-      SecurityGroups: ['sg-zzzzz'],
-    }).promise();
+    await efs
+      .createMountTarget({
+        FileSystemId: fileSystemId,
+        SubnetId: subnetId,
+        SecurityGroups: ['sg-zzzzz'],
+      })
+      .promise();
   }
 
   await waitForMountTargetsAvailable(fileSystemId);
@@ -69,9 +74,9 @@ async function createTaskDefinition() {
           {
             sourceVolume: 'playground-volume',
             containerPath: '/app/shared',
-            readOnly: false
-          }
-        ]
+            readOnly: false,
+          },
+        ],
       },
       {
         name: 'code-execution-container',
@@ -81,22 +86,22 @@ async function createTaskDefinition() {
           {
             sourceVolume: 'playground-volume',
             containerPath: '/app/shared',
-            readOnly: false
-          }
-        ]
-      }
+            readOnly: false,
+          },
+        ],
+      },
     ],
     volumes: [
       {
         name: 'playground-volume',
         efsVolumeConfiguration: {
-          transitEncryption: 'ENABLED'
-        }
-      }
+          transitEncryption: 'ENABLED',
+        },
+      },
     ],
     requiresCompatibilities: ['FARGATE'],
     cpu: '256',
-    memory: '512'
+    memory: '512',
   };
 
   const result = await ecs.registerTaskDefinition(taskDefinition).promise();
@@ -114,29 +119,31 @@ async function createPlayground() {
   const taskDefinitionArn = await createTaskDefinition();
 
   const ecs = new AWS.ECS();
-  const runTaskResult = await ecs.runTask({
-    taskDefinition: taskDefinitionArn,
-    cluster: 'your-cluster',
-    networkConfiguration: {
-      awsvpcConfiguration: {
-        subnets: ['subnet-xxxxx', 'subnet-yyyyy'],
-        securityGroups: ['sg-zzzzz'],
-        assignPublicIp: 'ENABLED'
-      }
-    },
-    overrides: {
-      containerOverrides: [],
-      volumeOverrides: [
-        {
-          name: 'playground-volume',
-          efsVolumeConfiguration: {
-            fileSystemId: fileSystemId,
-            transitEncryption: 'ENABLED'
-          }
-        }
-      ]
-    }
-  }).promise();
+  const runTaskResult = await ecs
+    .runTask({
+      taskDefinition: taskDefinitionArn,
+      cluster: 'your-cluster',
+      networkConfiguration: {
+        awsvpcConfiguration: {
+          subnets: ['subnet-xxxxx', 'subnet-yyyyy'],
+          securityGroups: ['sg-zzzzz'],
+          assignPublicIp: 'ENABLED',
+        },
+      },
+      overrides: {
+        containerOverrides: [],
+        volumeOverrides: [
+          {
+            name: 'playground-volume',
+            efsVolumeConfiguration: {
+              fileSystemId: fileSystemId,
+              transitEncryption: 'ENABLED',
+            },
+          },
+        ],
+      },
+    })
+    .promise();
 
   const taskArn = runTaskResult.tasks[0].taskArn;
   const playgroundId = generateUniqueId();
@@ -162,10 +169,12 @@ async function deletePlayground(playgroundId) {
   const playgroundDetails = await getPlaygroundMapping(playgroundId);
 
   const ecs = new AWS.ECS();
-  await ecs.stopTask({
-    cluster: 'your-cluster',
-    task: playgroundDetails.taskArn
-  }).promise();
+  await ecs
+    .stopTask({
+      cluster: 'your-cluster',
+      task: playgroundDetails.taskArn,
+    })
+    .promise();
 
   const efs = new AWS.EFS();
   await efs.deleteFileSystem({ FileSystemId: playgroundDetails.fileSystemId }).promise();
@@ -175,7 +184,6 @@ async function deletePlayground(playgroundId) {
   // Additional cleanup (e.g., ALB deregistration)
 }
 ```
-
 
 Routing
 The Application Load Balancer (ALB) routes requests to the appropriate containers based on unique playground identifiers. This can be implemented using path-based or host-based routing rules.
