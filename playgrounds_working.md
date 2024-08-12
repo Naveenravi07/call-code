@@ -1,4 +1,4 @@
-# Online IDE: Cloud Infrastructure and Backend Setup
+# Online IDE: Cloud Infrastructure and Backend Setting up
 
 ## Overview
 
