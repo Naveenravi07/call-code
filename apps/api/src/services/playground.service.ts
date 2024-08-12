@@ -6,11 +6,16 @@ const ecsClient = new AWS.ECS({
 });
 
 async function createPlayground(clusterName: string, taskId: string) {
-  let response = await ecsClient
+  const taskData = await ecsClient
     .runTask({
       cluster: clusterName,
       taskDefinition: taskId,
       count: 1,
     })
     .promise();
+
+  if (taskData.tasks == undefined) {
+    return;
+  }
+  const taskArn = taskData.tasks[0].taskArn;
 }
