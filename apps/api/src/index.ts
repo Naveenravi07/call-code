@@ -2,6 +2,7 @@ import express, { Application } from 'express';
 import { zodMiddleWare } from './middlewares/zod.middleware';
 import { client } from './database/db';
 import authRouter from './routes/auth.route';
+import pgRouter from './routes/playgrounds.route';
 import session from 'express-session';
 import passport from 'passport';
 import cookieparser from 'cookie-parser';
@@ -47,6 +48,7 @@ app.get('/', (req, res) => {
 });
 
 app.use('/auth', authRouter);
+app.use('/playgrounds', pgRouter);
 //Middlewares
 app.use(zodMiddleWare);
 

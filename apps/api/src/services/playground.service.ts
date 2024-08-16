@@ -1,21 +1,28 @@
 import AWS from 'aws-sdk';
+import { EFSClient, CreateFileSystemCommand } from '@aws-sdk/client-efs';
 
 const ecsClient = new AWS.ECS({
   accessKeyId: process.env.AWS_ACCESSKEY,
   secretAccessKey: process.env.AWS_SECRETKEY,
 });
 
-async function createPlayground(clusterName: string, taskId: string) {
-  const taskData = await ecsClient
-    .runTask({
-      cluster: clusterName,
-      taskDefinition: taskId,
-      count: 1,
-    })
-    .promise();
+const efsClient = new EFSClient({
+  region: 'us-west-1',
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESSKEY ?? '',
+    secretAccessKey: process.env.AWS_SECRETKEY ?? '',
+  },
+});
 
-  if (taskData.tasks == undefined) {
-    return;
-  }
-  const taskArn = taskData.tasks[0].taskArn;
+export async function createEFSForPlayground() {
+  const command = new CreateFileSystemCommand({
+    PerformanceMode: 'generalPurpose',
+    ThroughputMode: 'bursting',
+    Encrypted: true,
+    Tags: [{ Key: 'Purpose', Value: 'CodePlayground' }],
+  });
+
+  const efsData = await efsClient.send(command);
+  console.log('EFS Created:', efsData.FileSystemId);
+  return efsData;
 }
