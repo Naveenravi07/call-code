@@ -31,7 +31,7 @@ export async function createEFSForPlayground() {
 }
 
 export async function createMountTargetForPlayground(fileSystemId:string){
-    await new Promise(resolve => setTimeout(resolve,1000));
+    await new Promise(resolve => setTimeout(resolve,10000));
     const createMountTargetParams = {
         FileSystemId: fileSystemId,
         SubnetId: "subnet-0a74b75b4a1c7412b",
@@ -42,18 +42,42 @@ export async function createMountTargetForPlayground(fileSystemId:string){
       console.log(`Created Mount Target: ${mountTargetData.MountTargetId}`);
 }
 
-export async function runECSPlaygroundTask() {
+export async function runECSPlaygroundTask(fileSystemId:string) {
     let command = new RunTaskCommand({
         cluster : 'codecall-cluster',
         taskDefinition:'code-vite',
+        launchType:"EC2",
+        networkConfiguration:{
+            awsvpcConfiguration:{
+                subnets:["subnet-0a74b75b4a1c7412b"],
+                securityGroups:["sg-0e2a3312321fdcdfd"],
+
+            }
+        },
         overrides:{
             containerOverrides:[
                 {
                     name:"vite",
-                    
-                    
+                    environment:[
+                        {
+                            name: "EFS_ID",
+                            value:fileSystemId
+                        }
+                    ],
+                },
+                {
+                    name:"ws",
+                    environment:[
+                        {
+                            name:"EFS_ID",
+                            value:fileSystemId
+                        }
+                    ]
                 }
             ]
         }
     })
+    const taskData = await ecsClient.send(command);
+    if(taskData.tasks == undefined) return
+    console.log(`Started ECS Task: ${taskData.tasks[0].taskArn}`);
 }
