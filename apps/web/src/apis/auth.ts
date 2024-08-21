@@ -10,6 +10,7 @@ export async function loginWithGithub() {
 
 export async function getUserData() {
   const { data } = await instance.get('/auth/me');
+  console.log(data);
   return data;
 }
 

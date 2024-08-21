@@ -8,6 +8,7 @@ export function zodMiddleWare(
   res: Response,
   _next: NextFunction,
 ): void {
+  console.log('[Error] Zod Error Occured');
   /* eslint-enable */
   if (err instanceof z.ZodError) {
     res.status(400).json({

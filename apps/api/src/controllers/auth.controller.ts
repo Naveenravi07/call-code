@@ -1,6 +1,12 @@
 import { CustomError } from '$/classes/CustomError.class';
 import { NextFunction, Request, Response } from 'express';
 import passport from 'passport';
+
+const clienturl =
+  (process.env.NODE_ENV === 'production'
+    ? process.env.CLIENT_PROD_URL
+    : process.env.CLIENT_DEV_URL) ?? 'http://localhost:5173';
+
 async function googleLoginController(req: Request, res: Response, next: NextFunction) {
   passport.authenticate('google', {
     scope: ['profile', 'email'],
@@ -29,11 +35,6 @@ async function githubLoginCBController(req: Request, res: Response, next: NextFu
 }
 
 async function authSuccessController(req: Request, res: Response) {
-  const clienturl =
-    (process.env.NODE_ENV === 'production'
-      ? process.env.CLIENT_PROD_URL
-      : process.env.CLIENT_DEV_URL) ?? 'http://localhost:';
-
   console.log('Auth Success Printing User Data', req.user);
   res.cookie('x-auth-cookie', req.user?.id);
   res.redirect(clienturl);
@@ -44,8 +45,8 @@ async function getUserDetailsController(req: Request, res: Response) {
   if (user == undefined) {
     res.clearCookie('x-auth-cookie');
   }
-  console.log(user);
-  res.setHeader('Access-Control-Allow-Credential', '*');
+  res.setHeader('Access-Control-Allow-Credential', clienturl);
+  res.setHeader('Access-Control-Allow-Origin', clienturl);
   res.json(user ?? undefined).status(user ? 200 : 404);
 }
 

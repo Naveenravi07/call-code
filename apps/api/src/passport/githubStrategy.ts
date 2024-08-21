@@ -30,7 +30,7 @@ const githubLogin = new GithubStrategy(
   {
     clientID: GH_CLIENTID,
     clientSecret: GH_CLIENTSEC,
-    callbackURL: `${serverUrl}auth/github/cb`,
+    callbackURL: `${serverUrl}/auth/github/cb`,
   },
   /* eslint-disable */
   async function (accessToken: any, refreshToken: any, profile: any, done: any) {
@@ -48,7 +48,6 @@ const githubLogin = new GithubStrategy(
         email: profile._json.email ?? null,
         name: profile.displayName,
       };
-      console.log(newUser);
       await createNewUser(newUser);
       return done(null, profile);
     } catch (err) {

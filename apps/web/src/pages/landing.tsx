@@ -37,7 +37,7 @@ export default function LandingPage() {
 
   if (isLoading) return 'Loading';
   if (isError) {
-    console.log(error);
+    console.log(error?.message);
     return 'Error occured';
   }
 
