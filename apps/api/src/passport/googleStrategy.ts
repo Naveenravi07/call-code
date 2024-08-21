@@ -30,7 +30,7 @@ const googleLogin = new GoogleStrategy(
   {
     clientID: clientId,
     clientSecret: clientSecret,
-    callbackURL: `${serverUrl}auth/google/cb`,
+    callbackURL: `${serverUrl}/auth/google/cb`,
   },
   /* eslint-disable */
   async function verify(accessToken: any, refreshToken: any, profile: any, done: any) {

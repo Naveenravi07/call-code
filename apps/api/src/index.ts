@@ -16,7 +16,6 @@ const clienturl =
     ? process.env.CLIENT_PROD_URL
     : process.env.CLIENT_DEV_URL) ?? 'http://localhost:5173';
 
-console.log(clienturl);
 app.use(
   cors({
     origin: clienturl,
