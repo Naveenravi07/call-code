@@ -9,7 +9,7 @@ const ecsClient = new ECSClient({
 });
 
 export async function runECSPlaygroundTask() {
-  let command = new RunTaskCommand({
+  const command = new RunTaskCommand({
     cluster: 'codecall-cluster',
     taskDefinition: 'code-vite',
     launchType: 'EC2',
@@ -17,7 +17,8 @@ export async function runECSPlaygroundTask() {
       awsvpcConfiguration: {
         subnets: ['subnet-0a74b75b4a1c7412b'],
         securityGroups: ['sg-0e2a3312321fdcdfd'],
-      }},
+      },
+    },
   });
   const taskData = await ecsClient.send(command);
   if (taskData.tasks == undefined) return;
