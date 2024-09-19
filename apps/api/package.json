@@ -43,7 +43,6 @@
     },
     "dependencies": {
         "@aws-sdk/client-ecs": "^3.632.0",
-        "@aws-sdk/client-efs": "^3.632.0",
         "aws-sdk": "^2.1672.0",
         "cookie": "^0.6.0",
         "cookie-parser": "^1.4.6",

@@ -1,15 +1,6 @@
-import { EFSClient, CreateFileSystemCommand, CreateMountTargetCommand } from '@aws-sdk/client-efs';
-import { ECSClient, RunTaskCommand, MountPoint } from '@aws-sdk/client-ecs';
+import { ECSClient, RunTaskCommand } from '@aws-sdk/client-ecs';
 
 const ecsClient = new ECSClient({
-  region: 'us-west-1',
-  credentials: {
-    accessKeyId: process.env.AWS_ACCESSKEY ?? '',
-    secretAccessKey: process.env.AWS_SECRETKEY ?? '',
-  },
-});
-
-const efsClient = new EFSClient({
   region: 'us-west-1',
   credentials: {
     accessKeyId: process.env.AWS_ACCESSKEY ?? '',
