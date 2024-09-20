@@ -1,18 +1,11 @@
 import { ECSClient, DescribeTasksCommand, DescribeContainerInstancesCommand } from '@aws-sdk/client-ecs';
-import { ElasticLoadBalancingV2Client, RegisterTargetsCommand, DeregisterTargetsCommand } from '@aws-sdk/client-elastic-load-balancing-v2';
-import * as utils from './utils.mjs';
+import { ElasticLoadBalancingV2Client, RegisterTargetsCommand } from '@aws-sdk/client-elastic-load-balancing-v2';
 
 const ecsClient = new ECSClient();
 const elbv2Client = new ElasticLoadBalancingV2Client();
 
 export const handler  = async (event) => {
     const detail = event.detail;
-    
-    if (detail.lastStatus == "PENDING") {
-        console.log(`Ignoring event for task ${detail.taskArn} with status ${detail.lastStatus}`);
-        return; // Exit if the task is not RUNNING
-    }
-
     try {
             const taskArn = detail.taskArn;
             const clusterArn = detail.clusterArn;
@@ -35,8 +28,6 @@ export const handler  = async (event) => {
             const hostPort2 = detail.containers[1].networkBindings[0].hostPort
 
 
-        if (detail.lastStatus === "RUNNING") {
-            
             const containersOver = taskInfo.tasks[0].overrides.containerOverrides
             const containerOverride = containersOver.find((cont) => cont.name === 'ws'); // Choosing ws bcz ws will be always present no matter the task defenition
             
@@ -58,17 +49,6 @@ export const handler  = async (event) => {
             console.log(`Registered EC2 instance ${ec2InstanceId} with port ${hostPort} and ${hostPort2}`);
             
             
-        } else if (detail.lastStatus === "STOPPED") {
-            // Task is stopping, deregister the target
-            //const hostPort = detail.containers[0].networkBindings[0].hostPort; 
-
-            //const deregisterParams = {
-                //TargetGroupArn: 'arn:aws:elasticloadbalancing:us-west-1:990606644332:targetgroup/codecall-tg1/c5aef8e3ed83faa9', 
-                //Targets: [{ Id: ec2InstanceId, Port: hostPort }]
-            //};
-            //await elbv2Client.send(new DeregisterTargetsCommand(deregisterParams));
-            //console.log(`Deregistered EC2 instance ${ec2InstanceId} with port ${hostPort}`);
-        }
     } catch (error) {
         console.error("Error handling event:", error);
     }
