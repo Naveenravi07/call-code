@@ -1,0 +1,9 @@
+[package]
+name = "callcode-orchestrator"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+futures-lite = "2.5.0"
+lapin = "2.5.0"
+tokio = { version = "1.42.0", features = ["full"] }
