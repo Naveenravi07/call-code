@@ -1,19 +1,25 @@
 const amqp = require('amqplib');
 
 const server_uri = "amqp://guest:guest@localhost:5672"
-const queueName = 'nova-orchestrator'; 
+const queueName = 'nova-orchestrator';
 
 async function publishMessage() {
+
+    let msg = {
+        id: "123",
+        playground_name: "playground_1",
+        service_name: "vite-base",
+    }
+
     try {
         const connection = await amqp.connect(server_uri);
         const channel = await connection.createChannel();
-        
+
         await channel.assertQueue(queueName, {
             durable: false
         });
 
-        const message = 'Test message ' + new Date().toISOString();
-        channel.sendToQueue(queueName, Buffer.from(message));
+        channel.sendToQueue(queueName, Buffer.from(JSON.stringify(msg)));
 
         setTimeout(() => {
             connection.close();

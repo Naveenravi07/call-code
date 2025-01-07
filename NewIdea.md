@@ -47,9 +47,8 @@ it failed to allocate the docker volmume. Then our consumers cant send messages 
 prevent this we can enable custom message acknowledgement.
 
 
-# Playground service host software
+# Tasks of orchestrator software
 
-We should setup a script in our consuming system software. The script should configure appropirate
-disk space and user permission so that it dosent affect our local computer. 
-On each new message we can clone a github repo if not found in path. Then cd into appropirate service 
-and run 
+The orchestrator will primarly have 2 phases of execution on every message. On the first phase it will 
+run some scripts to check whether the system is capable of running this playground. ie(ram,volume left,port limitations). 
+

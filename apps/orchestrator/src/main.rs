@@ -4,7 +4,9 @@ use lapin::{
     types::FieldTable,
     Connection, ConnectionProperties,
 };
+use serde::{Deserialize, Serialize};
 
+#[derive(Serialize, Deserialize, Debug)]
 struct Message {
     id: String,
     playground_name: String,
@@ -13,47 +15,64 @@ struct Message {
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let rmq_addr: String = String::from("amqp://guest:guest@localhost:5672");
-    let queue_name: String = String::from("nova-orchestrator");
+    let rmq_addr = "amqp://guest:guest@localhost:5672";
+    let queue_name = "nova-orchestrator";
 
-    let conn = Connection::connect(&rmq_addr, ConnectionProperties::default())
+    let conn = Connection::connect(rmq_addr, ConnectionProperties::default())
         .await
-        .expect("Connection error");
+        .expect("Failed to connect to RabbitMQ");
 
-    let channel = conn.create_channel().await.expect("Create channel failed");
+    let channel = conn
+        .create_channel()
+        .await
+        .expect("Failed to create channel");
 
-    //
-    //In order to consume messages in a queue. First we need to declare a queue with same
-    //spec mentioned in server.
-    //
-    
-    let _queue = channel
+    // Declare the queue
+    channel
         .queue_declare(
-            &queue_name,
+            queue_name,
             QueueDeclareOptions::default(),
             FieldTable::default(),
         )
         .await
-        .expect("Queue not found in channel");
+        .expect("Failed to declare queue");
 
     let mut consumer = channel
         .basic_consume(
-            &queue_name,
+            queue_name,
             "consumer_tag",
             BasicConsumeOptions::default(),
             FieldTable::default(),
         )
-        .await?;
+        .await
+        .expect("Failed to start consumer");
 
     println!("Waiting for messages...");
 
-    while let Some(delivery) = consumer.next().await {
-        if let Ok(delivery) = delivery {
-            let data = String::from_utf8_lossy(&delivery.data);
-            println!("Received: {}", data);
-            delivery.ack(BasicAckOptions::default()).await?;
+    while let Some(delivery_result) = consumer.next().await {
+        match delivery_result {
+            Ok(delivery) => {
+                let data = String::from_utf8_lossy(&delivery.data);
+                println!("Received: {}", data);
+
+                match serde_json::from_str::<Message>(&data) {
+                    Ok(msg) => {
+                        println!("Parsed: {:?}", msg);
+                        if let Err(e) = delivery.ack(BasicAckOptions::default()).await {
+                            eprintln!("Failed to acknowledge message: {}", e);
+                        }
+                    }
+                    Err(e) => {
+                        eprintln!("Failed to parse message: {}", e);
+                    }
+                }
+            }
+            Err(e) => {
+                eprintln!("Failed to consume message: {}", e);
+            }
         }
     }
 
     Ok(())
 }
+
