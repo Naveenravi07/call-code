@@ -45,3 +45,11 @@ Also one message will be consumed by only one machine.
 In case of scenarios like the machine acknowledged the message and then after some time an error occured like
 it failed to allocate the docker volmume. Then our consumers cant send messages to producer. So to
 prevent this we can enable custom message acknowledgement.
+
+
+# Playground service host software
+
+We should setup a script in our consuming system software. The script should configure appropirate
+disk space and user permission so that it dosent affect our local computer. 
+On each new message we can clone a github repo if not found in path. Then cd into appropirate service 
+and run 

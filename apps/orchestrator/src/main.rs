@@ -5,6 +5,12 @@ use lapin::{
     Connection, ConnectionProperties,
 };
 
+struct Message {
+    id: String,
+    playground_name: String,
+    service_name: String,
+}
+
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let rmq_addr: String = String::from("amqp://guest:guest@localhost:5672");
@@ -20,6 +26,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     //In order to consume messages in a queue. First we need to declare a queue with same
     //spec mentioned in server.
     //
+    
     let _queue = channel
         .queue_declare(
             &queue_name,
