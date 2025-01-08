@@ -53,11 +53,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         match delivery_result {
             Ok(delivery) => {
                 let data = String::from_utf8_lossy(&delivery.data);
-                println!("Received: {}", data);
-
                 match serde_json::from_str::<Message>(&data) {
                     Ok(msg) => {
                         println!("Parsed: {:?}", msg);
+                        
+
                         if let Err(e) = delivery.ack(BasicAckOptions::default()).await {
                             eprintln!("Failed to acknowledge message: {}", e);
                         }
