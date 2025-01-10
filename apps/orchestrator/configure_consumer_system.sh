@@ -26,4 +26,17 @@ else
     echo "Repository directory already exists."
 fi
 
+if [[ $(which docker) && $(docker --version) ]]; then
+    sudo usermod -aG docker cc_orchestrator
+  else
+      echo "Docker not found quitting"
+      exit 1;
+fi
 
+
+sudo -i -u cc_orchestrator bash << 'EOF'
+REPO_PATH="/home/cc_orchestrator/.local/callcode"
+cd "$REPO_PATH"
+echo "$1"
+cd "apps/$1"
+EOF
