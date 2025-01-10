@@ -1,7 +1,10 @@
+use core::str;
 use lapin::types::Boolean;
+use regex::Regex;
 use std::io;
 use tokio::fs;
 use tokio::process::Command;
+
 
 pub async fn check_dir_exists(path: &str) -> Boolean {
     let status = match fs::try_exists(path).await {
@@ -101,3 +104,41 @@ pub async fn start_docker_compose(
     println!("Docker Compose Up Completed Successfully");
     Ok(())
 }
+
+pub async fn get_ports_of_services(
+    playground_name: &str,
+) -> Result<(u32, u32), Box<dyn std::error::Error>> {
+    let main_service = format!("{}-service", playground_name);
+    let websocket_service = format!("{}-ws", playground_name);
+
+    async fn get_port(service_name: &str) -> Result<u32, Box<dyn std::error::Error>> {
+        let output = Command::new("docker")
+            .arg("container")
+            .arg("port")
+            .arg(service_name)
+            .output()
+            .await?;
+
+        if !output.status.success() {
+            return Err(format!("Cannot find port of service: {}", service_name).into());
+        }
+
+        let output_str = str::from_utf8(&output.stdout)?.trim();
+
+        let re = Regex::new(r"->.*:(\d+)")?;
+        if let Some(captures) = re.captures(output_str) {
+            if let Some(port_match) = captures.get(1) {
+                let port = port_match.as_str().parse::<u32>()?;
+                return Ok(port);
+            }
+        }
+
+        Err(format!( "Could not extract port number from output: {}", output_str) .into())
+    }
+
+    let main_port = get_port(&main_service).await?;
+    let websocket_port = get_port(&websocket_service).await?;
+
+    Ok((main_port, websocket_port))
+}
+

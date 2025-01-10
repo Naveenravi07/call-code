@@ -147,5 +147,8 @@ async fn handle_message(msg: &Message, username: &str) -> Result<(), Box<dyn std
     }
 
     utils::start_docker_compose(&service_path, &msg.playground_name, &msg.playground_name).await?;
+    let (main_port, ws_port) = utils::get_ports_of_services(&msg.playground_name).await?;
+    println!(" Main service port = {main_port}, wwebsocket service port = {ws_port}");
+
     Ok(())
 }
