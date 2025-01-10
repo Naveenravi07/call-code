@@ -21,7 +21,6 @@ const IMG_GH_REPO_URL: &str = "https://github.com/Naveenravi07/call-code-base-im
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let rmq_addr = "amqp://guest:guest@localhost:5672";
     let queue_name = "nova-orchestrator";
-    let username = "cc_orchestrator";
 
     let channel = setup_rabbitmq_channel(rmq_addr, queue_name).await?;
     let mut consumer = setup_consumer(&channel, queue_name).await?;
@@ -29,7 +28,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("Waiting for messages...");
 
     while let Some(delivery_result) = consumer.next().await {
-        if let Err(e) = process_message(delivery_result, username).await {
+        if let Err(e) = process_message(delivery_result).await {
             eprintln!("Error processing message: {}", e);
         }
     }
@@ -79,7 +78,6 @@ async fn setup_consumer(
 
 async fn process_message(
     delivery_result: Result<lapin::message::Delivery, lapin::Error>,
-    username: &str,
 ) -> Result<(), Box<dyn std::error::Error>> {
     let delivery = match delivery_result {
         Ok(delivery) => delivery,
@@ -88,7 +86,6 @@ async fn process_message(
             return Ok(());
         }
     };
-
     let data = String::from_utf8_lossy(&delivery.data);
     let msg: Message = match serde_json::from_str(&data) {
         Ok(msg) => msg,
@@ -97,29 +94,28 @@ async fn process_message(
             return Ok(());
         }
     };
-    let _result = match handle_message(&msg, username).await {
-        Ok(res) => res,
+    let _result = match handle_message(&msg).await {
         Err(_e) => {
-            println!("{:?}", _e);
-            println!("Error occured while handling message; so rejecting");
+            println!("Error occured while handling message; So Rejecting, Err: {:?}",_e);
             delivery
                 .reject(BasicRejectOptions::default())
                 .await
                 .unwrap();
         }
+        Ok(_res) => {
+            if let Err(e) = delivery.ack(BasicAckOptions::default()).await {
+                eprintln!("Failed to acknowledge message: {}", e);
+            }
+        }
     };
-
-    if let Err(e) = delivery.ack(BasicAckOptions::default()).await {
-        eprintln!("Failed to acknowledge message: {}", e);
-    }
 
     Ok(())
 }
 
-async fn handle_message(msg: &Message, username: &str) -> Result<(), Box<dyn std::error::Error>> {
+async fn handle_message(msg: &Message) -> Result<(), Box<dyn std::error::Error>> {
     println!(
-        "Processing message for user: {}, playground: {}, service: {}",
-        username, msg.playground_name, msg.service_name
+        "Processing message for  playground: {}, service: {}",
+        msg.playground_name, msg.service_name
     );
 
     let dir = utils::check_dir_exists(&IMG_DIR_PATH).await;
@@ -148,7 +144,7 @@ async fn handle_message(msg: &Message, username: &str) -> Result<(), Box<dyn std
 
     utils::start_docker_compose(&service_path, &msg.playground_name, &msg.playground_name).await?;
     let (main_port, ws_port) = utils::get_ports_of_services(&msg.playground_name).await?;
-    println!(" Main service port = {main_port}, wwebsocket service port = {ws_port}");
+    println!(" Main service port = {main_port}, websocket service port = {ws_port}");
 
     Ok(())
 }
