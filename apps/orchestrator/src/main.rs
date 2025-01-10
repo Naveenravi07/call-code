@@ -5,7 +5,6 @@ use lapin::{
     Connection, ConnectionProperties,
 };
 use serde::{Deserialize, Serialize};
-use utils::clone_repository;
 mod utils;
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -122,12 +121,31 @@ async fn handle_message(msg: &Message, username: &str) -> Result<(), Box<dyn std
         "Processing message for user: {}, playground: {}, service: {}",
         username, msg.playground_name, msg.service_name
     );
+
     let dir = utils::check_dir_exists(&IMG_DIR_PATH).await;
     if !dir {
         utils::create_dir(&IMG_DIR_PATH).await?;
         utils::clone_repository(&IMG_GH_REPO_URL, &IMG_DIR_PATH).await?;
     }
 
+    let vol_exist = utils::check_docker_vol_exists(&msg.playground_name).await;
+    if vol_exist {
+        return Err(format!(
+            "Docker volume '{}' already exists. Cannot proceed.",
+            msg.playground_name
+        )
+        .into());
+    }
 
+    utils::create_docker_volume(&msg.playground_name).await?;
+
+    let service_path = format!("{}/{}", &IMG_DIR_PATH, &msg.service_name);
+    let service_exists = utils::check_dir_exists(&service_path).await;
+
+    if !service_exists {
+        return Err(format!("Invalid service found  Cannot proceed.",).into());
+    }
+
+    utils::start_docker_compose(&service_path, &msg.playground_name, &msg.playground_name).await?;
     Ok(())
 }

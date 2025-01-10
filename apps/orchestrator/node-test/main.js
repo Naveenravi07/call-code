@@ -7,7 +7,7 @@ async function publishMessage() {
 
     let msg = {
         id: "123",
-        playground_name: "playground_1",
+        playground_name: "playground_2",
         service_name: "vite-base",
     }
 
