@@ -19,7 +19,8 @@ const IMG_GH_REPO_URL: &str = "https://github.com/Naveenravi07/call-code-base-im
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let rmq_addr = "amqp://shastri_cc:root@localhost:5672";
+    let rmq_addr = "amqp://shastri_cc:root@192.168.0.110:5672";
+   // let rmq_addr = "amqp://shastri_cc:root@localhost:5672";
     let queue_name = "nova-orchestrator";
 
     let channel = setup_rabbitmq_channel(rmq_addr, queue_name).await?;
