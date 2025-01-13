@@ -46,9 +46,3 @@ In case of scenarios like the machine acknowledged the message and then after so
 it failed to allocate the docker volmume. Then our consumers cant send messages to producer. So to
 prevent this we can enable custom message acknowledgement.
 
-
-# Tasks of orchestrator software
-
-The orchestrator will primarly have 2 phases of execution on every message. On the first phase it will 
-run some scripts to check whether the system is capable of running this playground. ie(ram,volume left,port limitations). 
-

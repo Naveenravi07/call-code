@@ -82,6 +82,7 @@ pub async fn start_docker_compose(
     vol_name: &str,
     service_name: &str,
 ) -> io::Result<()> {
+
     let output = Command::new("docker-compose")
         .arg("-p")
         .arg(service_name)

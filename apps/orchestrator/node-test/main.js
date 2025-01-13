@@ -1,5 +1,6 @@
 const amqp = require('amqplib');
 
+// let rmq_addr = "amqp://shastri_cc:root@localhost:5672";
 const server_uri = "amqp://guest:guest@localhost:5672"
 const queueName = 'nova-orchestrator';
 
