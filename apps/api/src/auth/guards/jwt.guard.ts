@@ -6,15 +6,12 @@ import {
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { JwtService } from '../jwt.service';
-import { AuthService } from '../auth.service';
 import { ConfigService } from '../../config/config.service';
-import { JwtUser } from '../types/jwt-payload.type';
 
 @Injectable()
 export class JwtGuard implements CanActivate {
   constructor(
     private readonly jwtService: JwtService,
-    private readonly authService: AuthService,
     private readonly configService: ConfigService,
   ) { }
 
@@ -53,12 +50,11 @@ export class JwtGuard implements CanActivate {
       accessToken = tokens.accessToken;
     }
 
-    const payload = await this.jwtService.verifyToken(accessToken) as JwtUser;
+    const payload = await this.jwtService.verifyToken(accessToken);
     if (!payload) {
       throw new UnauthorizedException('Invalid access token');
     }
     request.user = payload;
-    
     return true;
   }
 } 

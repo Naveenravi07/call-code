@@ -64,7 +64,7 @@ export function Navbar() {
                 <span className="sr-only">Open user menu</span>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-64 p-2" sideOffset={8}>
+            <DropdownMenuContent align="end" className="w-60 p-2" sideOffset={8}>
               <div className="flex flex-col space-y-1 p-2">
                 <p className="font-medium text-base truncate">{user.name}</p>
                 <p className="text-sm text-muted-foreground truncate">{user.email}</p>
