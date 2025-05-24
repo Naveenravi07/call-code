@@ -7,7 +7,6 @@ const useAuth = () => {
   const query = useQuery({
     queryKey: ['user'],
     queryFn: getUserData,
-    enabled: document.cookie.includes('x-auth-cookie'),
     retry: false,
   });
   const { data, error, isLoading, isError, isFetching } = query;

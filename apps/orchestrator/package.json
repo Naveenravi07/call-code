@@ -1,9 +1,0 @@
-{
-    "name": "orchestrator",
-    "scripts": {
-        "build": "cargo build --release",
-        "dev": "cargo run",
-        "test":"cargo test",
-        "format":"cargo fmt"
-    }
-}

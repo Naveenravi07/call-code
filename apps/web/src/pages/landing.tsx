@@ -1,5 +1,4 @@
-import { Link } from 'react-router-dom';
-import { logoutUser } from '@/apis/auth';
+import { Link } from '@tanstack/react-router';
 import {
   Card,
   CardHeader,
@@ -18,81 +17,12 @@ import {
   SelectItem,
 } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-} from '@/components/ui/dropdown-menu';
-import useAuth from '@/hooks/useAuth';
-import { useToast } from '@/components/ui/use-toast';
+import { Navbar } from '@/components/Navbar';
 
 export default function LandingPage() {
-  const { user, isLoading, isError, error, invalidate } = useAuth();
-  const defaultPfpUrl =
-    'https://t3.ftcdn.net/jpg/05/11/52/90/360_F_511529094_PISGWTmlfmBu1g4nocqdVKaHBnzMDWrN.jpg';
-  const { toast } = useToast();
-
-  if (isLoading) return 'Loading';
-  if (isError) {
-    console.log(error?.message);
-    return 'Error occured';
-  }
-
-  function handleLogout() {
-    logoutUser()
-      .then(() => {
-        invalidate();
-      })
-      .catch(() => {
-        toast({
-          title: 'Logout failed',
-        });
-      });
-  }
-
   return (
     <div className="flex flex-col min-h-[100dvh]">
-      <header className="flex items-center h-16 px-4 border-b shrink-0 md:px-6">
-        <div className="flex items-center gap-4 ml-auto">
-          {user ? (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Avatar className="h-9 w-9">
-                  <AvatarImage src={user?.pfp ?? defaultPfpUrl} />
-                  <AvatarFallback>JP</AvatarFallback>
-                  <span className="sr-only">Toggle user menu</span>
-                </Avatar>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-56">
-                <DropdownMenuItem className="font-bold text-lg">{user?.name}</DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem asChild>
-                  <Link to="#" className="block w-full text-left">
-                    Profile
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem asChild>
-                  <Button
-                    onClick={() => handleLogout()}
-                    variant="outline"
-                    className="block w-full text-left"
-                  >
-                    Logout
-                  </Button>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          ) : (
-            <Link to={'/login'}>
-              <Button> Login</Button>
-            </Link>
-          )}
-        </div>
-      </header>
+      <Navbar />
       <main className="flex-1">
         <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48">
           <div className="container px-4 md:px-6">
@@ -109,7 +39,7 @@ export default function LandingPage() {
                 </div>
                 <div className="flex gap-4">
                   <Link
-                    to="#"
+                    to="/"
                     className="inline-flex h-10 items-center justify-center rounded-md bg-primary px-8 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
                   >
                     Create Meeting
@@ -154,7 +84,7 @@ export default function LandingPage() {
                   </div>
                 </CardContent>
                 <CardFooter>
-                  <Button>Generate Meeting Link</Button>
+                  <Button>Schedule a meeting </Button>
                 </CardFooter>
               </Card>
             </div>
@@ -165,37 +95,37 @@ export default function LandingPage() {
         <div className="container max-w-7xl grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-8 text-sm">
           <div className="grid gap-1">
             <h3 className="font-semibold">Company</h3>
-            <Link to="#">About Us</Link>
-            <Link to="#">Our Team</Link>
-            <Link to="#">Careers</Link>
-            <Link to="#">News</Link>
+            <Link to="/">About Us</Link>
+            <Link to="/">Our Team</Link>
+            <Link to="/">Careers</Link>
+            <Link to="/">News</Link>
           </div>
           <div className="grid gap-1">
             <h3 className="font-semibold">Products</h3>
-            <Link to="#">Meetings</Link>
-            <Link to="#">Webinars</Link>
-            <Link to="#">Presentations</Link>
-            <Link to="#">Workshops</Link>
+            <Link to="/">Meetings</Link>
+            <Link to="/">Webinars</Link>
+            <Link to="/">Presentations</Link>
+            <Link to="/">Workshops</Link>
           </div>
           <div className="grid gap-1">
             <h3 className="font-semibold">Resources</h3>
-            <Link to="#">Blog</Link>
-            <Link to="#">Community</Link>
-            <Link to="#">Support</Link>
-            <Link to="#">FAQs</Link>
+            <Link to="/">Blog</Link>
+            <Link to="/">Community</Link>
+            <Link to="/">Support</Link>
+            <Link to="/">FAQs</Link>
           </div>
           <div className="grid gap-1">
             <h3 className="font-semibold">Legal</h3>
-            <Link to="#">Privacy Policy</Link>
-            <Link to="#">Terms of Service</Link>
-            <Link to="#">Cookie Policy</Link>
+            <Link to="/">Privacy Policy</Link>
+            <Link to="/">Terms of Service</Link>
+            <Link to="/">Cookie Policy</Link>
           </div>
           <div className="grid gap-1">
             <h3 className="font-semibold">Contact</h3>
-            <Link to="#">Support</Link>
-            <Link to="#">Sales</Link>
-            <Link to="#">Press</Link>
-            <Link to="#">Partnerships</Link>
+            <Link to="/">Support</Link>
+            <Link to="/">Sales</Link>
+            <Link to="/">Press</Link>
+            <Link to="/">Partnerships</Link>
           </div>
         </div>
       </footer>

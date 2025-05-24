@@ -1,5 +1,24 @@
-import { Link } from 'react-router-dom';
+import { Link } from '@tanstack/react-router';
+import { useEffect, useRef } from 'react';
+import useAuth from '@/hooks/useAuth';
+import { useToast } from '@/components/ui/use-toast';
+
 export default function AuthSuccess() {
+  const { invalidate } = useAuth();
+  const { toast } = useToast();
+  const hasShownToast = useRef(false);
+
+  useEffect(() => {
+    if (!hasShownToast.current) {
+      invalidate();
+      toast({
+        title: 'Successfully authenticated',
+        description: 'You have been successfully logged in.',
+      });
+      hasShownToast.current = true;
+    }
+  }, []);
+
   return (
     <div className="flex min-h-[100dvh] flex-col items-center justify-center bg-background px-4 py-12 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-md text-center">
@@ -13,7 +32,7 @@ export default function AuthSuccess() {
         </p>
         <div className="mt-6">
           <Link
-            to="#"
+            to="/"
             className="inline-flex items-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-sm transition-colors hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
           >
             Continue to App

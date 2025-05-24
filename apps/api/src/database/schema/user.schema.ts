@@ -3,7 +3,7 @@ import { text, pgTable, uuid, pgEnum } from 'drizzle-orm/pg-core';
 const providers = ['google', 'github'] as const;
 export const pg_provider = pgEnum('provider', providers);
 
-export const userTable = pgTable('users', {
+export const users = pgTable('users', {
   id: uuid('id').primaryKey(),
   name: text('name').notNull(),
   pwd: text('pwd'),
@@ -13,5 +13,16 @@ export const userTable = pgTable('users', {
   pfp: text('pfp'),
 });
 
-export type User = typeof userTable.$inferSelect;
-export type Providers = (typeof providers)[number];
+export type Provider = (typeof providers)[number];
+
+export interface User {
+  id: string;
+  name: string;
+  pwd: string | null;
+  provider: Provider;
+  providerid: string;
+  email: string | null;
+  pfp: string | null;
+}
+
+export type NewUser = typeof users.$inferInsert; 
