@@ -1,8 +1,7 @@
-import type { User } from "src/database/schema";
+import { JwtUser } from "src/auth/types/jwt-payload.type";
 
 declare module 'express' {
     interface Request {
-        user?: User;
-        userId?: string;
+        user?: JwtUser;
     }
 }

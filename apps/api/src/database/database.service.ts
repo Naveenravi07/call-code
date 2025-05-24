@@ -17,7 +17,7 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
   }
 
   async onModuleInit() {
-    await this.client.connect();
+    await this.client.connect()
   }
 
   async onModuleDestroy() {

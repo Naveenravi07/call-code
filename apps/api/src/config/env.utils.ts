@@ -12,7 +12,6 @@ export function setupEnv() {
   const envFiles = [
     `.env.${NODE_ENV}.local`, // .env.development.local, .env.production.local
     `.env.${NODE_ENV}`,       // .env.development, .env.production
-    '.env.local',             // .env.local
     '.env'                    // .env
   ];
 

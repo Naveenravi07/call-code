@@ -1,4 +1,4 @@
-import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthController } from './auth.controller';
@@ -10,7 +10,6 @@ import { DatabaseModule } from '../database/database.module';
 import { UsersModule } from '../users/users.module';
 import { JwtService } from './jwt.service';
 import { JwtGuard } from './guards/jwt.guard';
-import { UserMiddleware } from './middleware/user.middleware';
 
 @Module({
   imports: [
@@ -27,12 +26,6 @@ import { UserMiddleware } from './middleware/user.middleware';
     GithubStrategy,
     JwtService,
     JwtGuard,
-    UserMiddleware,
   ],
 })
-export class AuthModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    // Apply the middleware to all routes
-    consumer.apply(UserMiddleware).forRoutes('*');
-  }
-} 
+export class AuthModule  {} 

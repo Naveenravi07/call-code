@@ -5,6 +5,7 @@ import { ConfigService } from '../config/config.service';
 import { User } from '../database/schema/user.schema';
 import { JwtService } from './jwt.service';
 import { JwtGuard } from './guards/jwt.guard';
+import { GetUser } from './decorators/auth.decorator';
 
 
 @Controller('auth')
@@ -12,7 +13,7 @@ export class AuthController {
   constructor(
     private readonly configService: ConfigService,
     private readonly jwtService: JwtService,
-  ) {}
+  ) { }
 
   @Get('google/login')
   @UseGuards(AuthGuard('google'))
@@ -22,26 +23,23 @@ export class AuthController {
 
   @Get('google/cb')
   @UseGuards(AuthGuard('google'))
-  async googleAuthCallback(@Req() req: Request, @Res() res: Response) {
-    if (!req.user) {
-      return res.redirect('/auth/google/err');
-    }
-    const tokens = await this.jwtService.generateTokens(req.user as unknown as User);
-    
+  async googleAuthCallback(@GetUser() user: User, @Res() res: Response) {
+    const tokens = await this.jwtService.generateTokens(user);
+
     res.cookie('access_token', tokens.accessToken, {
       httpOnly: true,
       secure: this.configService.isProduction,
       sameSite: 'lax',
       maxAge: 15 * 60 * 1000, // 15 minutes
     });
-    
+
     res.cookie('refresh_token', tokens.refreshToken, {
       httpOnly: true,
       secure: this.configService.isProduction,
       sameSite: 'lax',
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
-    
+
     return res.redirect(`${this.configService.clientUrl}/auth/success`);
   }
 
@@ -53,25 +51,23 @@ export class AuthController {
 
   @Get('github/cb')
   @UseGuards(AuthGuard('github'))
-  async githubAuthCallback(@Req() req: Request, @Res() res: Response) {
-    if (!req.user) {
-      return res.redirect('/login');
-    }
-    const tokens = await this.jwtService.generateTokens(req.user as unknown as User);
+  async githubAuthCallback(@GetUser() user:User, @Res() res: Response) {
+
+    const tokens = await this.jwtService.generateTokens(user);
     res.cookie('access_token', tokens.accessToken, {
       httpOnly: true,
       secure: this.configService.isProduction,
       sameSite: 'lax',
       maxAge: 15 * 60 * 1000, // 15 minutes
     });
-    
+
     res.cookie('refresh_token', tokens.refreshToken, {
       httpOnly: true,
       secure: this.configService.isProduction,
       sameSite: 'lax',
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
-    
+
     return res.redirect(`${this.configService.clientUrl}/auth/success`);
   }
 
@@ -96,7 +92,7 @@ export class AuthController {
       sameSite: 'lax',
       maxAge: 15 * 60 * 1000, // 15 minutes
     });
-    
+
     res.cookie('refresh_token', tokens.refreshToken, {
       httpOnly: true,
       secure: this.configService.isProduction,
@@ -116,7 +112,7 @@ export class AuthController {
 
   @Get('me')
   @UseGuards(JwtGuard)
-  async me(@Req() req: Request): Promise<User> {
-    return req.user;
+  async me(@GetUser() user: User): Promise<User> {
+    return user;
   }
 } 

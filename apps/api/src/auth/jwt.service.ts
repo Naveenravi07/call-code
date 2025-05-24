@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { JwtService as NestJwtService } from '@nestjs/jwt';
 import { ConfigService } from '../config/config.service';
 import { User } from '../database/schema/user.schema';
+import { JwtUser } from './types/jwt-payload.type';
 
 @Injectable()
 export class JwtService {
@@ -14,8 +15,10 @@ export class JwtService {
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(
         {
-          sub: user.id,
+          id: user.id,
           email: user.email,
+          name: user.name,
+          pfp: user.pfp,
         },
         {
           secret: this.configService.jwtSecret,
@@ -24,7 +27,10 @@ export class JwtService {
       ),
       this.jwtService.signAsync(
         {
-          sub: user.id,
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          pfp: user.pfp,
         },
         {
           secret: this.configService.jwtRefreshSecret,
@@ -41,7 +47,7 @@ export class JwtService {
 
   async verifyToken(token: string, isRefresh = false) {
     try {
-      const payload = await this.jwtService.verifyAsync(token, {
+      const payload = await this.jwtService.verifyAsync<JwtUser>(token, {
         secret: isRefresh
           ? this.configService.jwtRefreshSecret
           : this.configService.jwtSecret,
