@@ -1,4 +1,4 @@
 1. Ditch Nginx as the controller for ingress and use something else that supports dynamic service selection
 2. Write a ingress creator helper
 3. Migrate UI for coding from prev project
-
+4. Maybe ditch pnpm and switch to npm completely
