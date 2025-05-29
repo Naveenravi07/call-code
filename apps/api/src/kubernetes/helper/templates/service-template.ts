@@ -1,8 +1,10 @@
 import * as k8s from '@kubernetes/client-node';
+
 interface ServicePort {
     name: string;
     port: number;
     targetPort: number;
+    protocol: string
 }
 
 interface ServiceParams {
@@ -20,6 +22,7 @@ export function createServiceManifest({
     serviceType,
     ports
 }: ServiceParams): k8s.V1Service {
+
     return {
         apiVersion: 'v1',
         kind: 'Service',
@@ -37,10 +40,11 @@ export function createServiceManifest({
                 'session-id': sessionId,
                 'user-id': userId,
             },
-            ports: ports.map(({ name, port, targetPort }) => ({
+            ports: ports.map(({ name, port, targetPort, protocol }) => ({
                 name,
                 port,
                 targetPort,
+                protocol
             })),
         },
     };
