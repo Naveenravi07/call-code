@@ -12,7 +12,6 @@ interface JobVolume {
     name: string;
     emptyDir?: {};
     hostPath?: { path: string; type?: string };
-    // Add more volume types as needed
 }
 
 interface JobParams {
@@ -20,6 +19,7 @@ interface JobParams {
     userId: string;
     jobName?: string; // Optional, defaults to `callcode-session-{sessionId}`
     labels?: Record<string, string>;
+    annotations?: Record<string, string>;
     backoffLimit?: number;
     restartPolicy?: 'Never' | 'OnFailure';
     volumes?: JobVolume[];
@@ -32,6 +32,7 @@ export function createJobManifest({
     userId,
     jobName = `callcode-session-${sessionId}`,
     labels = {},
+    annotations = {},
     backoffLimit = 2,
     restartPolicy = 'Never',
     volumes = [],
@@ -53,6 +54,7 @@ export function createJobManifest({
             backoffLimit,
             template: {
                 metadata: {
+                    annotations: annotations,
                     labels: mergedLabels,
                 },
                 spec: {

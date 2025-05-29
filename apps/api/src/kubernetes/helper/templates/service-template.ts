@@ -1,5 +1,4 @@
 import * as k8s from '@kubernetes/client-node';
-
 interface ServicePort {
     name: string;
     port: number;
@@ -10,7 +9,7 @@ interface ServiceParams {
     sessionId: string;
     userId: string;
     appName?: string;               // default: 'callcode'
-    serviceType?: string;           // default: 'NodePort'
+    serviceType?: string;
     ports: ServicePort[];
 }
 
@@ -18,7 +17,7 @@ export function createServiceManifest({
     sessionId,
     userId,
     appName = 'callcode',
-    serviceType = 'NodePort',
+    serviceType,
     ports
 }: ServiceParams): k8s.V1Service {
     return {

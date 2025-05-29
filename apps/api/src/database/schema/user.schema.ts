@@ -14,15 +14,5 @@ export const users = pgTable('users', {
 });
 
 export type Provider = (typeof providers)[number];
+export type User = typeof users.$inferSelect;
 
-export interface User {
-  id: string;
-  name: string;
-  pwd: string | null;
-  provider: Provider;
-  providerid: string;
-  email: string | null;
-  pfp: string | null;
-}
-
-export type NewUser = typeof users.$inferInsert; 
