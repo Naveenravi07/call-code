@@ -8,16 +8,16 @@ import { setupEnv } from './config/env.config';
 setupEnv();
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-  const configService = app.get(ConfigService);
-  
-  app.enableCors({
-    origin: configService.clientUrl,
-    credentials: true,
-  });
+    const app = await NestFactory.create(AppModule);
+    const configService = app.get(ConfigService);
 
-  app.use(cookieParser());
+    app.enableCors({
+        origin: configService.clientUrl,
+        credentials: true,
+    });
 
-  await app.listen(configService.port);
+    app.use(cookieParser());
+
+    await app.listen(configService.port);
 }
 bootstrap();

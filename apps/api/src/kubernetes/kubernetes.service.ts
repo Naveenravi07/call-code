@@ -11,6 +11,7 @@ import {
 
 @Injectable()
 export class KubernetesService {
+    public readonly namespace = 'default';
     private readonly kubernetesClient: KubeConfig;
     private readonly coreV1Api: CoreV1Api;
     private readonly batchV1Api: BatchV1Api;
@@ -31,7 +32,7 @@ export class KubernetesService {
                 body: jobSpec
             });
             console.log(response);
-            return response.status;
+            return response;
         } catch (error) {
             throw new Error(`Failed to create job: ${error.message}`);
         }
@@ -44,7 +45,7 @@ export class KubernetesService {
                 body: serviceSpec
             });
             console.log(response);
-            return response.status;
+            return response;
         } catch (error) {
             throw new Error(`Failed to create service: ${error.message}`);
         }
@@ -54,7 +55,7 @@ export class KubernetesService {
         namespace: string, 
         virtualServiceSpec: any,
         group = 'networking.istio.io',
-        version = 'v1alpha3',
+        version = 'v1beta1',
         plural = 'virtualservices'
     ) {
         try {
@@ -70,6 +71,7 @@ export class KubernetesService {
             console.log(response);
             return response;
         } catch (error) {
+            console.log(error);
             throw new Error(`Failed to create virtual service: ${error.message}`);
         }
     }

@@ -12,20 +12,21 @@ import { JwtService } from './jwt.service';
 import { JwtGuard } from './guards/jwt.guard';
 
 @Module({
-  imports: [
-    PassportModule.register({ defaultStrategy: 'jwt' }),
-    JwtModule.register({}),
-    ConfigModule,
-    DatabaseModule,
-    UsersModule,
-  ],
-  controllers: [AuthController],
-  providers: [
-    AuthService,
-    GoogleStrategy,
-    GithubStrategy,
-    JwtService,
-    JwtGuard,
-  ],
+    imports: [
+        PassportModule.register({ defaultStrategy: 'jwt' }),
+        JwtModule.register({}),
+        ConfigModule,
+        DatabaseModule,
+        UsersModule,
+    ],
+    controllers: [AuthController],
+    providers: [
+        AuthService,
+        GoogleStrategy,
+        GithubStrategy,
+        JwtService,
+        JwtGuard,
+    ],
+    exports: [JwtService]
 })
-export class AuthModule  {} 
+export class AuthModule { } 
