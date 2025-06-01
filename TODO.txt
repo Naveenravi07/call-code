@@ -1,4 +1,4 @@
-1. Ditch Nginx as the controller for ingress and use something else that supports dynamic service selection
-2. Write a ingress creator helper
-3. Migrate UI for coding from prev project
-4. Maybe ditch pnpm and switch to npm completely
+
+1. Write a status retreiver for playground with an inbuilt cache and all
+2. Add a very detailed logging service which can make debuging very much easier 
+3. Add progress percent (maybe along with the status api or a seperate SSE)
