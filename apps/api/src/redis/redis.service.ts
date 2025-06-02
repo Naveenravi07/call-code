@@ -1,29 +1,48 @@
-import { Injectable, OnModuleDestroy } from '@nestjs/common';
+import { Inject, Injectable, OnModuleDestroy } from '@nestjs/common';
 import Redis from 'ioredis';
+import { REDIS_CLIENT } from './redis.constant';
+import { ZodSchema } from 'zod';
 
 @Injectable()
 export class RedisService implements OnModuleDestroy {
-    private readonly redis: Redis;
+    constructor(
+        @Inject(REDIS_CLIENT) private readonly redisClient: Redis
+    ) { }
 
-    constructor() {
-        this.redis = new Redis();
+    async set(key: string, value: any, ttlSeconds?: number): Promise<void> {
+        const stringValue = typeof value === 'string' ? value : JSON.stringify(value);
+        if (ttlSeconds) {
+            await this.redisClient.set(key, stringValue, 'EX', ttlSeconds);
+        } else {
+            await this.redisClient.set(key, stringValue);
+        }
     }
 
-    async setPlaygroundStatus(sessionName: string, status: any) {
-        await this.redis.set(
-            `playground:${sessionName}`,
-            JSON.stringify(status),
-            'EX',
-            3600 // expire after 1 hour
-        );
+    async get<T>(key: string, schema?: ZodSchema<T>): Promise<T | null> {
+        const data = await this.redisClient.get(key);
+        if (!data) return null;
+
+        try {
+            const parsed = JSON.parse(data);
+            return schema ? schema.parse(parsed) : parsed;
+        } catch {
+            return schema ? null : (data as unknown as T);
+        }
     }
 
-    async getPlaygroundStatus(sessionName: string) {
-        const status = await this.redis.get(`playground:${sessionName}`);
-        return status ? JSON.parse(status) : null;
+    async del(key: string): Promise<void> {
+        await this.redisClient.del(key);
     }
 
-    onModuleDestroy() {
-        this.redis.disconnect();
+    async exists(key: string): Promise<boolean> {
+        return (await this.redisClient.exists(key)) === 1;
+    }
+
+    getClient(): Redis {
+        return this.redisClient;
+    }
+
+    async onModuleDestroy() {
+        await this.redisClient.quit();
     }
 }
