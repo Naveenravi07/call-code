@@ -1,4 +1,4 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { KubernetesService } from 'src/kubernetes/kubernetes.service';
 import namor from 'namor';
 import { manifestRegistry } from 'src/kubernetes/helper/manifest-registry';
@@ -6,16 +6,21 @@ import { PlayGroundStatus } from './dto/playground-status';
 import { RedisService } from 'src/redis/redis.service';
 import { playGroundStatusSchema } from 'src/playgrounds/dto/playground-status';
 import { V1JobStatus } from '@kubernetes/client-node';
+import { Observable, Observer } from 'rxjs';
+
 
 @Injectable()
 export class PlaygroundsService {
+    private readonly MAX_DELAY = 4000;
+    private readonly BASE_DELAY = 1000;
+
     constructor(
         @Inject(forwardRef(() => KubernetesService))
         private readonly kubernetesService: KubernetesService,
         private readonly redisService: RedisService
-    ) {}
+    ) { }
 
-    async createPlayground( playground_type: string, user_id: string ) {
+    async createPlayground(playground_type: string, user_id: string) {
 
         let session_name = namor.generate({ words: 2, saltLength: 0 });
         let registry = manifestRegistry[playground_type];
@@ -25,26 +30,26 @@ export class PlaygroundsService {
             this.kubernetesService.createService(this.kubernetesService.namespace, registry.serviceManifest(user_id, session_name)),
             this.kubernetesService.createIstioVirtualService(this.kubernetesService.namespace, registry.virtualServiceManifest(session_name)),
         ])
-        let status : PlayGroundStatus = {
-           job: {
-            ready: false,
-            status: "Created",
-            lastUpdated: new Date().toISOString(),
-           },
-           service: {
-            ready: false,
-            status: 'Created',
-            lastUpdated: new Date().toISOString(),
-           },
-           virtual_service: {
-            ready: false,   
-            hosts: [],
-            lastUpdated: new Date().toISOString(),
-           },
-           statusHistory: ["Job Created", "Service Created", "Virtual Service Created"],
-           lastChecked: new Date().toISOString(),
-           overallStatus: 'Initializing',
-           updateCount: 0,
+        let status: PlayGroundStatus = {
+            job: {
+                ready: false,
+                status: "Created",
+                lastUpdated: new Date().toISOString(),
+            },
+            service: {
+                ready: false,
+                status: 'Created',
+                lastUpdated: new Date().toISOString(),
+            },
+            virtual_service: {
+                ready: false,
+                hosts: [],
+                lastUpdated: new Date().toISOString(),
+            },
+            statusHistory: ["Job Created", "Service Created", "Virtual Service Created"],
+            lastChecked: new Date().toISOString(),
+            overallStatus: 'Initializing',
+            updateCount: 0,
         }
 
         await this.redisService.set(session_name, status);
@@ -59,12 +64,12 @@ export class PlaygroundsService {
         let sessionName = jobName.split('callcode-session-')[1];
         if (!sessionName) return;
         if (!jobStatus) return;
-        
+
         let status = await this.redisService.get(sessionName, playGroundStatusSchema);
         if (!status) return;
-        
+
         const now = new Date().toISOString();
-        
+
         const isJobReady = (active?: number, ready?: number) => {
             return active === 1 && ready === 1;
         };
@@ -72,15 +77,15 @@ export class PlaygroundsService {
         const isJobPending = (active?: number, ready?: number) => {
             return active === 1 && ready === 0;
         };
-        
+
         const isJobFailed = (failed?: number) => {
             return failed && failed > 0;
         };
-        
+
         const isJobSucceeded = (succeeded?: number) => {
             return succeeded && succeeded > 0;
         };
-    
+
         switch (phase) {
             case 'ADDED':
                 if (isJobReady(jobStatus.active, jobStatus.ready)) {
@@ -97,7 +102,7 @@ export class PlaygroundsService {
                     status.overallStatus = "Initializing";
                 }
                 break;
-                
+
             case 'MODIFIED':
                 if (isJobSucceeded(jobStatus.succeeded)) {
                     status.job.phase = "Succeeded";
@@ -128,7 +133,7 @@ export class PlaygroundsService {
                     status.overallStatus = "Initializing";
                 }
                 break;
-                
+
             case 'DELETED':
                 status.job.phase = "Failed";
                 status.job.status = "Job Deleted";
@@ -137,19 +142,72 @@ export class PlaygroundsService {
                 status.statusHistory.push("Job Deleted");
                 status.overallStatus = "Deleted";
                 break;
-                
+
             default:
                 status.statusHistory.push(`Unknown phase: ${phase}`);
                 break;
         }
-        
+
         status.job.lastUpdated = now;
         status.lastChecked = now;
         status.updateCount = status.updateCount + 1;
         status.job.podName = jobName;
-        
+
         await this.redisService.set(sessionName, status);
         return status;
-    } 
-    
+    }
+
+
+    async getPlaygroundStatus(sessionId: string) {
+        let status = await this.redisService.get(sessionId, playGroundStatusSchema)
+        if (!status) {
+            throw new NotFoundException('Playground not found');
+        }
+        return status;
+    }
+
+    createStatusObserver(sessionId: string): Observable<any> {
+        return new Observable((observer: Observer<any>) => {
+            let retryCount = 0;
+
+            const checkStatus = async () => {
+                try {
+                    const status = await this.getPlaygroundStatus(sessionId);
+                    if (status?.job?.ready === false) {
+                        observer.next({
+                            status: 'processing',
+                            message: 'Job is still running...',
+                            sessionId: sessionId,
+                            status_detail: status,
+                            ready: false
+                        });
+                        
+                        const delay = Math.min(this.BASE_DELAY * Math.pow(2, retryCount), this.MAX_DELAY);
+                        retryCount++;
+                        setTimeout(checkStatus, delay);
+                    } else if (status?.job?.ready === true) {
+                        observer.next({
+                            status: 'completed',
+                            message: 'ok',
+                            sessionId: sessionId,
+                            status_detail: status,
+                            ready: true
+                        });
+                        
+                        observer.complete();
+                    } else {
+                        observer.error(new Error('Invalid status response'));
+                    }
+                } catch (error) {
+                    observer.error(error);
+                }
+            };
+
+            checkStatus();
+
+            return () => {
+                console.log('SSE connection closed for session:', sessionId);
+            };
+        });
+    }
 }
