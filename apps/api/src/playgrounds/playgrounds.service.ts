@@ -2,9 +2,8 @@ import { forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/commo
 import { KubernetesService } from 'src/kubernetes/kubernetes.service';
 import namor from 'namor';
 import { manifestRegistry } from 'src/kubernetes/helper/manifest-registry';
-import { PlayGroundStatus } from './dto/playground-status';
+import { playground } from '@repo/shared-config/src/schemas';
 import { RedisService } from 'src/redis/redis.service';
-import { playGroundStatusSchema } from 'src/playgrounds/dto/playground-status';
 import { V1JobStatus } from '@kubernetes/client-node';
 import { Observable, Observer } from 'rxjs';
 
@@ -30,7 +29,7 @@ export class PlaygroundsService {
             this.kubernetesService.createService(this.kubernetesService.namespace, registry.serviceManifest(user_id, session_name)),
             this.kubernetesService.createIstioVirtualService(this.kubernetesService.namespace, registry.virtualServiceManifest(session_name)),
         ])
-        let status: PlayGroundStatus = {
+        let status: playground.PlayGroundStatus = {
             job: {
                 ready: false,
                 status: "Created",
@@ -65,7 +64,7 @@ export class PlaygroundsService {
         if (!sessionName) return;
         if (!jobStatus) return;
 
-        let status = await this.redisService.get(sessionName, playGroundStatusSchema);
+        let status = await this.redisService.get(sessionName, playground.playGroundStatusSchema);
         if (!status) return;
 
         const now = new Date().toISOString();
@@ -159,7 +158,7 @@ export class PlaygroundsService {
 
 
     async getPlaygroundStatus(sessionId: string) {
-        let status = await this.redisService.get(sessionId, playGroundStatusSchema)
+        let status = await this.redisService.get(sessionId, playground.playGroundStatusSchema)
         if (!status) {
             throw new NotFoundException('Playground not found');
         }

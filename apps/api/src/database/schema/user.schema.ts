@@ -9,7 +9,7 @@ export const users = pgTable('users', {
   pwd: text('pwd'),
   provider: pg_provider('provider').notNull(),
   providerid: text('p_id').notNull(),
-  email: text('email'),
+  email: text('email').notNull(),
   pfp: text('pfp'),
 });
 

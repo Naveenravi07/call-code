@@ -2,7 +2,7 @@
   "extends": "@repo/typescript-config/base.json",
   "compilerOptions": {
     "outDir": "dist",
-    "strict": false,
+    "strict": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "allowJs": true,

@@ -6,10 +6,15 @@
   "module": "./dist/esm/index.js",
   "types": "./dist/types/index.d.ts",
   "exports": {
-    ".": {
-      "import": "./dist/esm/index.js",
-      "require": "./dist/cjs/index.js",
-      "types": "./dist/types/index.d.ts"
+    "./src/constants": {
+      "import": "./dist/esm/constants/index.js",
+      "require": "./dist/cjs/constants/index.js",
+      "types": "./dist/types/constants/index.d.ts"
+    },
+    "./src/schemas": {
+      "import": "./dist/esm/schemas/index.js",
+      "require": "./dist/cjs/schemas/index.js",
+      "types": "./dist/types/schemas/index.d.ts"
     }
   },
   "scripts": {

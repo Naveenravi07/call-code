@@ -1,7 +1,7 @@
-import { JwtUser } from "src/auth/types/jwt-payload.type";
+import { user } from '@repo/shared-config/src/schemas';
 
 declare module 'express' {
     interface Request {
-        user?: JwtUser;
+        user?: user.JwtUser;
     }
 }

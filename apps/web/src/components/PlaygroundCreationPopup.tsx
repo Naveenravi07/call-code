@@ -4,7 +4,7 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { constants } from '@repo/shared-config';
+import {playground} from "@repo/shared-config/src/constants"
 
 interface PlayGroundCreationPopUpProps {
     isOpen: boolean;
@@ -47,7 +47,7 @@ export default function PlayGroundCreationPopUp({ isOpen, onClose }: PlayGroundC
                 </DialogHeader>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
-                    {constants.playground.meetingTypes.map((type) => {
+                    {playground.meetingTypes.map((type) => {
                         const IconComponent = type.icon;
                         const isSelected = selectedMeetingType === type.id;
                         return (

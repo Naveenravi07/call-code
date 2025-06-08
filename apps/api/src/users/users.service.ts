@@ -27,7 +27,7 @@ export class UsersService {
         return user;
     }
 
-    async createUser(name: string, provider: Provider, providerId: string, email: string | null, pfp?: string | null): Promise<User> {
+    async createUser(name: string, provider: Provider, providerId: string, email: string, pfp?: string | null): Promise<User> {
         const [user] = await this.db.db
             .insert(users)
             .values({
@@ -35,7 +35,7 @@ export class UsersService {
                 name,
                 provider,
                 providerid: providerId,
-                email: email || null,
+                email: email,
                 pfp: pfp || null,
             })
             .returning();

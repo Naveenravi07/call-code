@@ -1,7 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService as NestJwtService } from '@nestjs/jwt';
 import { ConfigService } from '../config/config.service';
-import { JwtUser } from './types/jwt-payload.type';
+import { user } from '@repo/shared-config/src/schemas';
 import { UsersService } from '../users/users.service';
 
 @Injectable()
@@ -12,7 +12,7 @@ export class JwtService {
     private readonly configService: ConfigService,
   ) {}
 
-  async generateTokens(user: JwtUser) {
+  async generateTokens(user: user.JwtUser) {
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(
         {
@@ -45,7 +45,7 @@ export class JwtService {
 
   async verifyToken(token: string, isRefresh = false) {
     try {
-      const payload = await this.jwtService.verifyAsync<JwtUser>(token, {
+      const payload = await this.jwtService.verifyAsync<user.JwtUser>(token, {
         secret: isRefresh
           ? this.configService.jwtRefreshSecret
           : this.configService.jwtSecret

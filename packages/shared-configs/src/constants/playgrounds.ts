@@ -133,3 +133,5 @@ export const meetingTypes = [
     color: 'text-gray-500',
   },
 ] as const;
+
+export const meetingTitles = meetingTypes.map(obj => obj.id) as unknown as [string, ...string[]];
