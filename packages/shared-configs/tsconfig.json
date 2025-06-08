@@ -1,0 +1,22 @@
+{
+  "extends": "@repo/typescript-config/base.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "strict": false,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "allowJs": true,
+    "isolatedModules": true,
+    "target": "ES2020",
+    "esModuleInterop": true,
+
+    "declaration": true,
+    "declarationMap": true,
+    "emitDeclarationOnly": false,
+
+    "module": "ESNext",
+    "moduleResolution": "Bundler"
+  },
+  "include": ["src/**/*","src/*"],
+  "exclude": ["node_modules", "dist"]
+}

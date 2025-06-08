@@ -1,5 +1,6 @@
-import { z } from 'zod'
+import { z } from 'zod';
+import { constants } from '@repo/shared-config';
 
-export const playgroundTypesSchema = z.enum(["vite","nextjs"])
+export const playgroundTypesSchema = z.enum(constants.playground.meetingTypes.map(type => type.id) as [string, ...string[]]);
 
-export type PlaygroundTypes = z.infer<typeof playgroundTypesSchema>
+export type PlaygroundTypes = z.infer<typeof playgroundTypesSchema>;
