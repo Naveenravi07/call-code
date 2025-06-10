@@ -26,7 +26,7 @@ export interface MeetingType {
 }
 
 
-export const meetingTypes = [
+export const playgroundList = [
   {
     id: 'javascript',
     title: 'JavaScript',
@@ -134,4 +134,5 @@ export const meetingTypes = [
   },
 ] as const;
 
-export const meetingTitles = meetingTypes.map(obj => obj.id) as unknown as [string, ...string[]];
+export const playgroundListById = playgroundList.map(obj => obj.id) as unknown as [string, ...string[]];
+

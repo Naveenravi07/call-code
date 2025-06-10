@@ -4,7 +4,7 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import {playground} from "@repo/shared-config/src/constants"
+import {playgroundList} from "@repo/api/playgrounds/constants"
 
 interface PlayGroundCreationPopUpProps {
     isOpen: boolean;
@@ -19,7 +19,7 @@ export default function PlayGroundCreationPopUp({ isOpen, onClose }: PlayGroundC
         setSelectedMeetingType(typeId);
     };
 
-    const handleSubmit = async() => {
+    const handleSubmit = async () => {
         if (selectedMeetingType && meetingName.trim()) {
             console.log('Creating meeting:', { type: selectedMeetingType, name: meetingName });
 
@@ -47,7 +47,7 @@ export default function PlayGroundCreationPopUp({ isOpen, onClose }: PlayGroundC
                 </DialogHeader>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
-                    {playground.meetingTypes.map((type) => {
+                    {playgroundList.map((type) => {
                         const IconComponent = type.icon;
                         const isSelected = selectedMeetingType === type.id;
                         return (

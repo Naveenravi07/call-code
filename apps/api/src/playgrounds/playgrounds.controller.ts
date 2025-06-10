@@ -1,10 +1,10 @@
 import { Body, UseGuards, Controller, Post, Sse, MessageEvent, Query } from '@nestjs/common';
 import { PlaygroundsService } from './playgrounds.service';
 import { ZodValidationPipe } from 'comon/pipes/zodValidationPipe';
-import {playground} from '@repo/shared-config/src/schemas';
+import {createPlaygroundSchema,CreatePlayground} from '@repo/api/playgrounds/schema';
 import { JwtGuard } from 'src/auth/guards/jwt.guard';
 import { GetUser } from 'src/auth/decorators/auth.decorator';
-import { user } from '@repo/shared-config/src/schemas';
+import { JwtUser } from '@repo/api/user/schema';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -16,8 +16,8 @@ export class PlaygroundsController {
 
     @Post('create')
     async createPlayground(
-        @Body(new ZodValidationPipe(playground.createPlaygroundSchema)) body: playground.CreatePlayground ,
-        @GetUser() user: user.JwtUser,
+        @Body(new ZodValidationPipe(createPlaygroundSchema)) body: CreatePlayground ,
+        @GetUser() user: JwtUser,
     ) {
         let playground_type = body.playground;
         let status = await this.playgroundsService.createPlayground(playground_type, user.id);
