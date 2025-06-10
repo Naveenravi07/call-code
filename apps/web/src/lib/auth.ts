@@ -18,9 +18,9 @@ export const authQueryKey = ['auth'] as const;
 // Function to fetch the current user
 const fetchCurrentUser = async (): Promise<User | null> => {
   try {
-    const { data } = await axios.get('/api/auth/me');
+    const { data } = await axios.get<User>('/api/auth/me');
     return data;
-  } catch (error) {
+  } catch {
     return null;
   }
 };
@@ -64,11 +64,11 @@ export const useAuthActions = () => {
 
   const invalidateAuth = () => {
     // Force a refetch of auth state
-    queryClient.invalidateQueries({ queryKey: authQueryKey });
+    void queryClient.invalidateQueries({ queryKey: authQueryKey });
   };
 
   return {
     logout,
     invalidateAuth,
   };
-}; 
+};

@@ -26,12 +26,12 @@ export function Navbar() {
       await logoutUser();
       queryClient.setQueryData(['user'], null);
       invalidate();
-      
+
       toast({
         title: 'Logged out',
         description: 'You have been successfully logged out.',
       });
-    } catch (error) {
+    } catch {
       invalidate();
       toast({
         title: 'Logout failed',
@@ -43,20 +43,26 @@ export function Navbar() {
 
   return (
     <header className="sticky top-0 z-40 flex items-center h-16 px-4 border-b shrink-0 bg-background/95 backdrop-blur-sm md:px-6">
-      <Link to="/" className="flex items-center gap-2 text-lg font-semibold transition-colors hover:text-primary/80">
+      <Link
+        to="/"
+        className="flex items-center gap-2 text-lg font-semibold transition-colors hover:text-primary/80"
+      >
         <LogoIcon className="h-6 w-6" />
         <span>Call Code</span>
       </Link>
-      
+
       <div className="flex items-center gap-4 ml-auto">
         {isLoading ? (
           <LoadingSpinner />
         ) : user ? (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="relative h-9 w-9 rounded-full p-0 overflow-hidden ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+              <Button
+                variant="ghost"
+                className="relative h-9 w-9 rounded-full p-0 overflow-hidden ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              >
                 <Avatar className="h-9 w-9">
-                  <AvatarImage src={user.pfp ?? ""} alt={user.name} />
+                  <AvatarImage src={user.pfp ?? ''} alt={user.name} />
                   <AvatarFallback className="bg-primary/10 text-primary font-medium">
                     {user.name.charAt(0).toUpperCase()}
                   </AvatarFallback>
@@ -72,12 +78,14 @@ export function Navbar() {
               <DropdownMenuSeparator />
               <DropdownMenuItem className="flex items-center gap-2 cursor-pointer py-2">
                 <User className="h-4 w-4" />
-                <Link to="/" className="flex-1">Profile</Link>
+                <Link to="/" className="flex-1">
+                  Profile
+                </Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem 
+              <DropdownMenuItem
                 className="flex items-center gap-2 cursor-pointer py-2 text-destructive hover:text-destructive focus:text-destructive"
-                onClick={handleLogout}
+                onClick={() => void handleLogout()}
               >
                 <LogOut className="h-4 w-4" />
                 <span className="flex-1">Logout</span>
@@ -86,9 +94,7 @@ export function Navbar() {
           </DropdownMenu>
         ) : (
           <Link to="/login">
-            <Button className="gap-2">
-              Login
-            </Button>
+            <Button className="gap-2">Login</Button>
           </Link>
         )}
       </div>

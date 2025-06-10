@@ -1,20 +1,20 @@
 import instance from '@/axios/axios.config';
+import { User } from '@/types/user';
 
-export async function loginWithGoogle() {
+export function loginWithGoogle(): void {
   window.location.href = 'http://localhost:8000/auth/google/login';
 }
 
-export async function loginWithGithub() {
+export function loginWithGithub(): void {
   window.location.href = 'http://localhost:8000/auth/github/login';
 }
 
-export async function getUserData() {
-  const { data } = await instance.get('/auth/me');
-  console.log(data);
+export async function getUserData(): Promise<User> {
+  const { data } = await instance.get<User>('/auth/me');
   return data;
 }
 
-export async function logoutUser() {
+export async function logoutUser(): Promise<unknown> {
   const data = await instance.post('/auth/logout');
   return data;
 }

@@ -16,4 +16,4 @@ import { envSchema } from './env.schema';
   providers: [ConfigService],
   exports: [ConfigService],
 })
-export class ConfigModule {} 
+export class ConfigModule {}

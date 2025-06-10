@@ -6,13 +6,9 @@ import { AuthModule } from 'src/auth/auth.module';
 import { RedisModule } from 'src/redis/redis.module';
 
 @Module({
-    imports: [
-        RedisModule,
-        forwardRef(() => KubernetesModule),
-        AuthModule,
-    ],
-    controllers: [PlaygroundsController],
-    providers: [PlaygroundsService],
-    exports: [PlaygroundsService]
+  imports: [RedisModule, forwardRef(() => KubernetesModule), AuthModule],
+  controllers: [PlaygroundsController],
+  providers: [PlaygroundsService],
+  exports: [PlaygroundsService],
 })
-export class PlaygroundsModule { }
+export class PlaygroundsModule {}

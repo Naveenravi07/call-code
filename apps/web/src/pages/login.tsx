@@ -29,10 +29,7 @@ export default function LoginPage() {
           <Separator>or sign in with</Separator>
           <div className="flex flex-col gap-2">
             <Button
-              onClick={() => {
-                console.log('Clicked');
-                loginWithGithub();
-              }}
+              onClick={() => void loginWithGithub()}
               variant="outline"
               className="w-full"
             >
@@ -40,10 +37,7 @@ export default function LoginPage() {
               Sign in with GitHub
             </Button>
             <Button
-              onClick={() => {
-                console.log('Clicked');
-                loginWithGoogle();
-              }}
+              onClick={() => void loginWithGoogle()}
               variant="outline"
               className="w-full"
             >
@@ -56,7 +50,8 @@ export default function LoginPage() {
     </div>
   );
 }
-interface IconProps extends React.SVGProps<SVGSVGElement> {}
+
+type IconProps = React.SVGProps<SVGSVGElement>;
 
 function ChromeIcon(props: IconProps) {
   return (

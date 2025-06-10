@@ -52,11 +52,16 @@
     "zod": "^3.25.28"
   },
   "devDependencies": {
+    "@eslint/js": "^8.57.1",
     "@types/cookie-parser": "^1.4.7",
     "@types/express": "^5.0.2",
     "@types/passport-github2": "^1.2.9",
-    "@types/passport-google-oauth2": "^0.1.8",
-    "@types/pg": "^8.11.4"
+    "@types/passport-google-oauth2": "^0.1.10",
+    "@types/passport-google-oauth20": "^2.0.16",
+    "@types/pg": "^8.11.4",
+    "eslint-config-prettier": "^10.1.5",
+    "eslint-plugin-prettier": "^5.4.1",
+    "typescript-eslint": "^8.34.0"
   },
   "jest": {
     "moduleFileExtensions": [
