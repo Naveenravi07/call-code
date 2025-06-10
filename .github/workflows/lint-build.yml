@@ -1,0 +1,35 @@
+# .github/workflows/lint-build.yml
+
+name: Lint and Build
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+    branches: [main, dev]
+
+jobs:
+  lint-build:
+    name: Lint and Build Monorepo
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'  # Or 'npm' if you're using npm
+
+      - name: Install dependencies
+        run: |
+          corepack enable
+          npm install
+
+      - name: Lint code
+        run: npm run lint 
+
+      - name: Build apps and packages
+        run: npm run build 
