@@ -53,6 +53,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^8.57.1",
+    "@nestjs/cli": "^11.0.7",
     "@types/cookie-parser": "^1.4.7",
     "@types/express": "^5.0.2",
     "@types/passport-github2": "^1.2.9",
