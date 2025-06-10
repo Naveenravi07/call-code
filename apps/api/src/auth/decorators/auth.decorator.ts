@@ -1,5 +1,5 @@
 import { createParamDecorator, ExecutionContext, UnauthorizedException } from '@nestjs/common';
-import { JwtUser } from '@repo/api/user/schema';
+import { JwtUser } from '@repo/shared/user/schema';
 
 
 export const GetUser = createParamDecorator(

@@ -1,5 +1,5 @@
 {
-  "name": "@repo/api",
+  "name": "@repo/shared",
   "version": "0.0.0",
   "private": true,
   "license": "MIT",
@@ -27,8 +27,9 @@
     "./dist/**"
   ],
   "scripts": {
-    "dev": "pnpm build --watch",
-    "build": "tsc -p tsconfig.cjs.json && tsc -p tsconfig.esm.json"
+    "dev": "tsc -p tsconfig.cjs.json && tsc -p tsconfig.esm.json --watch",
+    "build": "npm run clean && tsc -p tsconfig.cjs.json && tsc -p tsconfig.esm.json",
+    "clean" : "rm -rf dist"
   },
   "publishConfig": {
     "access": "public"

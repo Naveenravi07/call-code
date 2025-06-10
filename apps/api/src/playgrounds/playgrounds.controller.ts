@@ -1,10 +1,10 @@
 import { Body, UseGuards, Controller, Post, Sse, MessageEvent, Query } from '@nestjs/common';
 import { PlaygroundsService } from './playgrounds.service';
 import { ZodValidationPipe } from 'comon/pipes/zodValidationPipe';
-import {createPlaygroundSchema,CreatePlayground} from '@repo/api/playgrounds/schema';
+import {createPlaygroundSchema,CreatePlayground} from '@repo/shared/playgrounds/schema';
 import { JwtGuard } from 'src/auth/guards/jwt.guard';
 import { GetUser } from 'src/auth/decorators/auth.decorator';
-import { JwtUser } from '@repo/api/user/schema';
+import { JwtUser } from '@repo/shared/user/schema';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 

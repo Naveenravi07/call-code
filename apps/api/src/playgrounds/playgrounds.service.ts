@@ -5,7 +5,7 @@ import { manifestRegistry } from 'src/kubernetes/helper/manifest-registry';
 import { RedisService } from 'src/redis/redis.service';
 import { V1JobStatus } from '@kubernetes/client-node';
 import { Observable, Observer } from 'rxjs';
-import { PlayGroundStatus, playGroundStatusSchema } from "@repo/api/playgrounds/schema"
+import { PlayGroundStatus, playGroundStatusSchema } from "@repo/shared/playgrounds/schema"
 
 
 @Injectable()
