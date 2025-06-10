@@ -21,21 +21,29 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'npm'  # Or 'npm' if you're using npm
+          cache: 'npm'
 
-      - name: Install dependencies
+      - name: Enable Corepack 
+        run: corepack enable
+
+      - name: Install root dependencies
+        run: npm install
+
+      - name: Install API dependencies
+        working-directory: apps/api
+        run: npm install
+
+      - name: Install Web dependencies
+        working-directory: apps/web
+        run: npm install
+
+      - name: Inject .env from secret to apps/api
         run: |
-          corepack enable
-          npm install
+          echo "${{ secrets.ENV_FILE }}" > apps/api/.env.production
+          cp apps/api/.env.production apps/api/.env
 
       - name: Lint code
-        run: npm run lint 
+        run: npm run lint
 
-      - name: Inject .env from secret
-        run: echo "${{ secrets.ENV_FILE }}" > apps/api/.env.production
-
-      - name: Copy .env.production to .env in apps/api
-        run: cp apps/api/.env.production apps/api/.env
-        
       - name: Build apps and packages
-        run: npm run build 
+        run: npm run build
