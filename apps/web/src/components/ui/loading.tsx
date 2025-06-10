@@ -13,4 +13,4 @@ export function LoadingPage() {
       <p className="mt-4 text-sm text-muted-foreground">Loading...</p>
     </div>
   );
-} 
+}

@@ -23,7 +23,5 @@ export default function App() {
         </pre>
       </div>
     </div>
-  )
+  );
 }
-
-

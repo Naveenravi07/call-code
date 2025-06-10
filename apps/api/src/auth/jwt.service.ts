@@ -48,7 +48,7 @@ export class JwtService {
       const payload = await this.jwtService.verifyAsync<JwtUser>(token, {
         secret: isRefresh
           ? this.configService.jwtRefreshSecret
-          : this.configService.jwtSecret
+          : this.configService.jwtSecret,
       });
       return payload;
     } catch {
@@ -62,7 +62,7 @@ export class JwtService {
       return null;
     }
     const user = await this.userService.findById(payload.id);
-    if(!user) throw new UnauthorizedException("User not authorized")
+    if (!user) throw new UnauthorizedException('User not authorized');
     return this.generateTokens({
       id: user.id,
       email: user.email,
@@ -70,4 +70,4 @@ export class JwtService {
       pfp: user.pfp,
     });
   }
-} 
+}

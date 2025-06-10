@@ -8,16 +8,16 @@ import { setupEnv } from './config/env.config';
 setupEnv();
 
 async function bootstrap() {
-    const app = await NestFactory.create(AppModule);
-    const configService = app.get(ConfigService);
+  const app = await NestFactory.create(AppModule);
+  const configService = app.get(ConfigService);
 
-    app.enableCors({
-        origin: configService.clientUrl,
-        credentials: true,
-    });
+  app.enableCors({
+    origin: configService.clientUrl,
+    credentials: true,
+  });
 
-    app.use(cookieParser());
+  app.use(cookieParser());
 
-    await app.listen(configService.port);
+  await app.listen(configService.port);
 }
-bootstrap();
+bootstrap(); // eslint-disable-line

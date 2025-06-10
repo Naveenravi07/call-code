@@ -1,26 +1,31 @@
-import { V1Job, V1Service } from '@kubernetes/client-node';
+import type { V1Job, V1Service } from '@kubernetes/client-node';
 import { getViteJobManifest } from './manifest/job';
 import { getViteServiceManifest } from './manifest/service';
 import { getViteVirtualServiceManifest } from './manifest/virtual-service';
+import type { V1VirtualService } from './templates/virtual-service-template';
 
 interface ManifestGenerator {
-    jobManifest: (userId: string, sessionId: string) => V1Job;
-    serviceManifest: (userId: string, sessionId: string) => V1Service;
-    virtualServiceManifest: (sessionId: string) => any;
+  jobManifest: (userId: string, sessionId: string) => V1Job;
+  serviceManifest: (userId: string, sessionId: string) => V1Service;
+  virtualServiceManifest: (sessionId: string) => V1VirtualService;
 }
 
 export const manifestRegistry: Record<string, ManifestGenerator> = {
-    'vite': {
-        jobManifest: getViteJobManifest,
-        serviceManifest: getViteServiceManifest,
-        virtualServiceManifest: getViteVirtualServiceManifest
-    },
-}
+  vite: {
+    jobManifest: getViteJobManifest,
+    serviceManifest: getViteServiceManifest,
+    virtualServiceManifest: getViteVirtualServiceManifest,
+  },
+};
 
-export function getManifestGenerator(playgroundType: string): ManifestGenerator {
-    const generator = manifestRegistry[playgroundType];
-    if (!generator) {
-        throw new Error(`No manifest generator found for playground type: ${playgroundType}`);
-    }
-    return generator;
-} 
+export function getManifestGenerator(
+  playgroundType: string,
+): ManifestGenerator {
+  const generator = manifestRegistry[playgroundType];
+  if (!generator) {
+    throw new Error(
+      `No manifest generator found for playground type: ${playgroundType}`,
+    );
+  }
+  return generator;
+}

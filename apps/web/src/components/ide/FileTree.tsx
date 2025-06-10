@@ -1,4 +1,4 @@
-import { ChevronRight, Folder, File } from 'lucide-react'
+import { ChevronRight, Folder, File } from 'lucide-react';
 
 export default function FileTree() {
   return (
@@ -23,7 +23,5 @@ export default function FileTree() {
         </div>
       </div>
     </div>
-  )
+  );
 }
-
-

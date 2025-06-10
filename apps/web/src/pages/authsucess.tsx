@@ -17,7 +17,7 @@ export default function AuthSuccess() {
       });
       hasShownToast.current = true;
     }
-  }, []);
+  }, [invalidate, toast]);
 
   return (
     <div className="flex min-h-[100dvh] flex-col items-center justify-center bg-background px-4 py-12 sm:px-6 lg:px-8">
@@ -43,7 +43,7 @@ export default function AuthSuccess() {
   );
 }
 
-interface IconProps extends React.SVGProps<SVGSVGElement> {}
+type IconProps = React.SVGProps<SVGSVGElement>;
 function CircleCheckIcon(props: IconProps) {
   return (
     <svg

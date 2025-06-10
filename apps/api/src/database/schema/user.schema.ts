@@ -15,4 +15,3 @@ export const users = pgTable('users', {
 
 export type Provider = (typeof providers)[number];
 export type User = typeof users.$inferSelect;
-

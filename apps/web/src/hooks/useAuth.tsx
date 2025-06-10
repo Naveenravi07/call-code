@@ -4,19 +4,22 @@ import { User } from '@/types/user';
 
 const useAuth = () => {
   const queryClient = useQueryClient();
-  const query = useQuery({
+  const query = useQuery<User>({
     queryKey: ['user'],
-    queryFn: getUserData,
+    queryFn: async () => {
+      const data = await getUserData();
+      return data ;
+    },
     retry: false,
   });
   const { data, error, isLoading, isError, isFetching } = query;
 
   function invalidateUser() {
-    queryClient.invalidateQueries({ queryKey: ['user'] });
+    void queryClient.invalidateQueries({ queryKey: ['user'] });
   }
 
   return {
-    user: data as User,
+    user: data,
     error,
     isLoading,
     isError,

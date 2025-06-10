@@ -13,7 +13,7 @@ import { RedisModule } from './redis/redis.module';
     AuthModule,
     PlaygroundsModule,
     KubernetesModule,
-    RedisModule
+    RedisModule,
   ],
 })
 export class AppModule {}
