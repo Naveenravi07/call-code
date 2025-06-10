@@ -31,5 +31,11 @@ jobs:
       - name: Lint code
         run: npm run lint 
 
+      - name: Inject .env from secret
+        run: echo "${{ secrets.ENV_FILE }}" > apps/api/.env.production
+
+      - name: Copy .env.production to .env in apps/api
+        run: cp apps/api/.env.production apps/api/.env
+        
       - name: Build apps and packages
         run: npm run build 
