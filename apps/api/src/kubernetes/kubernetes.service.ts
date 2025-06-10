@@ -9,6 +9,7 @@ import {
   Watch,
 } from '@kubernetes/client-node';
 import { PlaygroundsService } from 'src/playgrounds/playgrounds.service';
+import { V1VirtualService } from './helper/templates/virtual-service-template';
 
 @Injectable()
 export class KubernetesService implements OnModuleInit {
@@ -62,22 +63,26 @@ export class KubernetesService implements OnModuleInit {
 
   async createIstioVirtualService(
     namespace: string,
-    virtualServiceSpec: any,
+    virtualServiceSpec: V1VirtualService,
     group = 'networking.istio.io',
     version = 'v1beta1',
     plural = 'virtualservices',
-  ) {
+  ): Promise<unknown> {
     try {
-            const response = await this.customObjectsApi.createNamespacedCustomObject({    // eslint-disable-line
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      const response = await this.customObjectsApi.createNamespacedCustomObject(
+        {
           version,
           group,
-                body: virtualServiceSpec,// eslint-disable-line
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+          body: virtualServiceSpec,
           plural,
           namespace,
         },
       );
 
-            return response;  //eslint-disable-line
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      return response as unknown;
     } catch (error) {
       console.log(error);
       const msg = error instanceof Error ? error.message : '';

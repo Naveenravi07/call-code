@@ -214,7 +214,8 @@ export class PlaygroundsService {
               this.MAX_DELAY,
             );
             retryCount++;
-                        setTimeout(async () => {   //eslint-disable-line
+            // eslint-disable-next-line @typescript-eslint/no-misused-promises
+            setTimeout(async () => {
               await checkStatus();
             }, delay);
           } else if (status?.job?.ready === true) {
@@ -235,7 +236,7 @@ export class PlaygroundsService {
         }
       };
 
-            checkStatus(); // eslint-disable-line
+      checkStatus();
 
       return () => {
         console.log('SSE connection closed for session:', sessionId);
