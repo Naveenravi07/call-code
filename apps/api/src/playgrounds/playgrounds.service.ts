@@ -2,10 +2,10 @@ import { forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/commo
 import { KubernetesService } from 'src/kubernetes/kubernetes.service';
 import namor from 'namor';
 import { manifestRegistry } from 'src/kubernetes/helper/manifest-registry';
-import { playground } from '@repo/shared-config/src/schemas';
 import { RedisService } from 'src/redis/redis.service';
 import { V1JobStatus } from '@kubernetes/client-node';
 import { Observable, Observer } from 'rxjs';
+import { PlayGroundStatus, playGroundStatusSchema } from "@repo/shared/playgrounds/schema"
 
 
 @Injectable()
@@ -29,7 +29,7 @@ export class PlaygroundsService {
             this.kubernetesService.createService(this.kubernetesService.namespace, registry.serviceManifest(user_id, session_name)),
             this.kubernetesService.createIstioVirtualService(this.kubernetesService.namespace, registry.virtualServiceManifest(session_name)),
         ])
-        let status: playground.PlayGroundStatus = {
+        let status: PlayGroundStatus = {
             job: {
                 ready: false,
                 status: "Created",
@@ -64,7 +64,7 @@ export class PlaygroundsService {
         if (!sessionName) return;
         if (!jobStatus) return;
 
-        let status = await this.redisService.get(sessionName, playground.playGroundStatusSchema);
+        let status = await this.redisService.get(sessionName, playGroundStatusSchema);
         if (!status) return;
 
         const now = new Date().toISOString();
@@ -158,7 +158,7 @@ export class PlaygroundsService {
 
 
     async getPlaygroundStatus(sessionId: string) {
-        let status = await this.redisService.get(sessionId, playground.playGroundStatusSchema)
+        let status = await this.redisService.get(sessionId, playGroundStatusSchema)
         if (!status) {
             throw new NotFoundException('Playground not found');
         }
@@ -180,7 +180,7 @@ export class PlaygroundsService {
                             status_detail: status,
                             ready: false
                         });
-                        
+
                         const delay = Math.min(this.BASE_DELAY * Math.pow(2, retryCount), this.MAX_DELAY);
                         retryCount++;
                         setTimeout(checkStatus, delay);
@@ -192,7 +192,7 @@ export class PlaygroundsService {
                             status_detail: status,
                             ready: true
                         });
-                        
+
                         observer.complete();
                     } else {
                         observer.error(new Error('Invalid status response'));

@@ -1,15 +1,8 @@
 import { z } from 'zod';
-import { meetingTitles } from '../constants/playgrounds';
+import { playgroundList } from './constants';
 
-export const playgroundTypesSchema = z.enum(meetingTitles);
+export const playgroundTypesSchema = z.enum(playgroundList.map(type => type.id) as [string, ...string[]]);
 export type PlaygroundTypes = z.infer<typeof playgroundTypesSchema>;
-
-
-export const createPlaygroundSchema = z.object({
-    playground: playgroundTypesSchema,
-})
-export type CreatePlayground = z.infer<typeof createPlaygroundSchema>
-
 
 export const jobStatusSchema = z.object({
     ready: z.boolean(),
@@ -20,18 +13,21 @@ export const jobStatusSchema = z.object({
     lastUpdated: z.string().datetime(),
     podName: z.string().optional(),
 });
+
 export const serviceStatusSchema = z.object({
     ready: z.boolean(),
     status: z.string(),
     error: z.string().nullable().optional(),
     lastUpdated: z.string().datetime(),
 });
+
 export const virtualServiceSchema = z.object({
     ready: z.boolean(),
     hosts: z.array(z.string()),
     error: z.string().nullable().optional(),
     lastUpdated: z.string().datetime(),
 });
+
 export const playGroundStatusSchema = z.object({
     job: jobStatusSchema,
     service: serviceStatusSchema,
@@ -41,4 +37,12 @@ export const playGroundStatusSchema = z.object({
     updateCount: z.number(),
     lastChecked: z.string().datetime(), 
 });
-export type PlayGroundStatus = z.infer<typeof playGroundStatusSchema>
+
+export type PlayGroundStatus = z.infer<typeof playGroundStatusSchema>;
+
+export const createPlaygroundSchema = z.object({
+    playground: playgroundTypesSchema,
+});
+
+export type CreatePlayground = z.infer<typeof createPlaygroundSchema>; 
+

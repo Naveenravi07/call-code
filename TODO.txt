@@ -1,4 +1,3 @@
-
 1. Write a status retreiver for playground with an inbuilt cache and all
 2. Add a very detailed logging service which can make debuging very much easier 
 3. Add progress percent (maybe along with the status api or a seperate SSE)
