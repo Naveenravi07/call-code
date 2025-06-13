@@ -1,15 +1,37 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import FileTree from '@/components/ide/FileTree';
 import Terminal from '@/components/ide/Terminal';
 import BottomControlBar from '@/components/ide/BottomControlBar';
 import Preview from '@/components/ide/Preview';
-import Editor from '@monaco-editor/react';
+import '@codingame/monaco-vscode-python-default-extension';
+import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
+import '@/components/ide/user-worker';
 
 export default function Playground() {
   const [showFileTree, setShowFileTree] = useState(true);
   const [showTerminal, setShowTerminal] = useState(true);
   const [showTextEditor, setShowTextEditor] = useState(true);
   const [showPreview, setShowPreview] = useState(true);
+
+  const [_editor, setEditor] = useState<monaco.editor.IStandaloneCodeEditor | null>(null);
+  const monacoEl = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!monacoEl.current) return;
+
+    const createdEditor = monaco.editor.create(monacoEl.current, {
+      value: "console.log('Hello world!');",
+      language: 'typescript',
+      theme: 'vs-dark',
+      automaticLayout: true,
+    });
+
+    setEditor(createdEditor);
+
+    return () => {
+      createdEditor.dispose();
+    };
+  }, []);
 
   return (
     <div className="flex flex-col h-screen bg-[#1e1e1e]">
@@ -27,14 +49,7 @@ export default function Playground() {
         <div className="flex-1 flex">
           {showTextEditor && (
             <div className="flex-1 border-r border-[#333333] mt-3">
-              <Editor
-                defaultPath="App.jsx"
-                theme="vs-dark"
-                height="90vh"
-                defaultLanguage="typescript"
-                defaultValue="// some comment"
-              />
-              ;
+              <div className="w-full h-full" ref={monacoEl}></div>
             </div>
           )}
           {showPreview && (

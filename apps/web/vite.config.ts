@@ -1,5 +1,6 @@
 import path from 'path';
 import react from '@vitejs/plugin-react';
+import importMetaUrlPlugin from '@codingame/esbuild-import-meta-url-plugin';
 import { defineConfig } from 'vite';
 
 export default defineConfig({
@@ -13,5 +14,10 @@ export default defineConfig({
   server: {
     host: '127.0.0.1',
     port: 5173,
+  },
+  optimizeDeps: {
+    esbuildOptions: {
+      plugins: [importMetaUrlPlugin],
+    },
   },
 });

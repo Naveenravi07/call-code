@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@codingame/esbuild-import-meta-url-plugin": "^1.0.3",
+    "@codingame/monaco-vscode-python-default-extension": "^17.2.0",
     "@monaco-editor/react": "^4.6.0",
     "@radix-ui/react-avatar": "^1.1.0",
     "@radix-ui/react-dialog": "^1.1.14",
@@ -23,10 +25,13 @@
     "@tanstack/react-query": "^5.51.15",
     "@tanstack/react-router": "^1.120.10",
     "@tanstack/router-devtools": "^1.120.10",
+    "@typefox/monaco-editor-react": "^6.8.0",
     "axios": "^1.7.2",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "lucide-react": "^0.416.0",
+    "monaco-editor": "^0.52.2",
+    "monaco-editor-wrapper": "^6.8.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "tailwind-merge": "^2.4.0",
