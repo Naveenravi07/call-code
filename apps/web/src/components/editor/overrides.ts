@@ -14,67 +14,70 @@ import getDebugServiceOverride from '@codingame/monaco-vscode-debug-service-over
 import getTestingServiceOverride from '@codingame/monaco-vscode-testing-service-override';
 import getPreferencesServiceOverride from '@codingame/monaco-vscode-preferences-service-override';
 
-import { defaultHtmlAugmentationInstructions, defaultViewsInit } from 'monaco-editor-wrapper/vscode/services';
+import {
+  defaultHtmlAugmentationInstructions,
+  defaultViewsInit,
+} from 'monaco-editor-wrapper/vscode/services';
 import { createDefaultLocaleConfiguration } from 'monaco-languageclient/vscode/services';
 import { ConfigParams } from './types';
 
 export function getAllOverrides(configParams: ConfigParams) {
-    return {
-        serviceOverrides: {
-            ...getKeybindingsServiceOverride(),
-            ...getLifecycleServiceOverride(),
-            ...getLocalizationServiceOverride(createDefaultLocaleConfiguration()),
-            ...getBannerServiceOverride(),
-            ...getStatusBarServiceOverride(),
-            ...getTitleBarServiceOverride(),
-            ...getExplorerServiceOverride(),
-            ...getRemoteAgentServiceOverride(),
-            ...getEnvironmentServiceOverride(),
-            ...getSecretStorageServiceOverride(),
-            ...getStorageServiceOverride(),
-            ...getSearchServiceOverride(),
-            ...getDebugServiceOverride(),
-            ...getTestingServiceOverride(),
-            ...getPreferencesServiceOverride()
+  return {
+    serviceOverrides: {
+      ...getKeybindingsServiceOverride(),
+      ...getLifecycleServiceOverride(),
+      ...getLocalizationServiceOverride(createDefaultLocaleConfiguration()),
+      ...getBannerServiceOverride(),
+      ...getStatusBarServiceOverride(),
+      ...getTitleBarServiceOverride(),
+      ...getExplorerServiceOverride(),
+      ...getRemoteAgentServiceOverride(),
+      ...getEnvironmentServiceOverride(),
+      ...getSecretStorageServiceOverride(),
+      ...getStorageServiceOverride(),
+      ...getSearchServiceOverride(),
+      ...getDebugServiceOverride(),
+      ...getTestingServiceOverride(),
+      ...getPreferencesServiceOverride(),
+    },
+    viewsConfig: {
+      viewServiceType: 'ViewsService' as const,
+      htmlAugmentationInstructions: defaultHtmlAugmentationInstructions,
+      viewsInitFunc: defaultViewsInit,
+    },
+    userConfiguration: {
+      json: JSON.stringify({
+        'workbench.colorTheme': 'Default Dark Modern',
+        'editor.guides.bracketPairsHorizontal': 'active',
+        'editor.wordBasedSuggestions': 'off',
+        'editor.experimental.asyncTokenization': true,
+        'debug.toolBarLocation': 'docked',
+      }),
+    },
+    workspaceConfig: {
+      enableWorkspaceTrust: true,
+      windowIndicator: {
+        label: configParams.extensionName ?? 'monaco-example',
+        tooltip: '',
+        command: '',
+      },
+      workspaceProvider: {
+        trusted: true,
+        async open() {
+          window.open(window.location.href);
+          return true;
         },
-        viewsConfig: {
-            viewServiceType: 'ViewsService' as const,
-            htmlAugmentationInstructions: defaultHtmlAugmentationInstructions,
-            viewsInitFunc: defaultViewsInit
-          },
-        userConfiguration: {
-            json: JSON.stringify({
-                'workbench.colorTheme': 'Default Dark Modern',
-                'editor.guides.bracketPairsHorizontal': 'active',
-                'editor.wordBasedSuggestions': 'off',
-                'editor.experimental.asyncTokenization': true,
-                'debug.toolBarLocation': 'docked'
-            })
+        workspace: {
+          workspaceUri: configParams.workspaceFile,
         },
-        workspaceConfig: {
-            enableWorkspaceTrust: true,
-            windowIndicator: {
-                label: configParams.extensionName ?? 'monaco-example',
-                tooltip: '',
-                command: ''
-            },
-            workspaceProvider: {
-                trusted: true,
-                async open() {
-                    window.open(window.location.href);
-                    return true;
-                },
-                workspace: {
-                    workspaceUri: configParams.workspaceFile
-                }
-            },
-            configurationDefaults: {
-                'window.title': '${dirty}${activeEditorShort}'
-            },
-            productConfiguration: {
-                nameShort: 'monaco-example',
-                nameLong: 'Monaco Editor Example'
-            }
-        }
-    };
+      },
+      configurationDefaults: {
+        'window.title': '${dirty}${activeEditorShort}',
+      },
+      productConfiguration: {
+        nameShort: 'monaco-example',
+        nameLong: 'Monaco Editor Example',
+      },
+    },
+  };
 }
