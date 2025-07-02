@@ -7,6 +7,7 @@ import { defineConfig } from 'vite';
 export default defineConfig({
     plugins: [react(), vsixPlugin()],
     resolve: {
+        dedupe: ['vscode'],
         alias: {
             '@': path.resolve(__dirname, './src'),
         },
