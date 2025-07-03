@@ -67,3 +67,63 @@
     @apply bg-background text-foreground;
   }
 }
+  #sidebarDiv,
+  #sidebarRightDiv {
+    display: flex;
+    flex: none;
+    border: 1px solid var(--vscode-editorWidget-border);
+  }
+
+  #sidebar {
+    width: 300px;
+  }
+
+  #editorsDiv {
+     flex: 1;
+     min-width: 0;
+  }
+
+  #editors {
+    position: relative;
+    min-width: 0;
+    height: 100%;
+    border: 1px solid var(--vscode-editorWidget-border);
+  }
+
+  #sidebar-right {
+    max-width: 500px;
+  }
+
+  #auxiliaryBar-left,
+  #auxiliaryBar {
+     max-width: 300px;
+  }
+
+  #panel {
+    display: none;
+    flex: 1;
+    border: 1px solid var(--vscode-editorWidget-border);
+    min-height: 0;
+  }
+
+  #titleBar {
+    position: relative;
+    flex: none;
+  }
+
+  #banner {
+    flex: none;
+  }
+
+  #workbench-container {
+    height: 100vh;
+    display: flex;
+    flex-direction: column
+  }
+
+  #workbench-top {
+    display: flex;
+    gap: 1px;
+    flex: 2;
+    min-height: 0
+  }

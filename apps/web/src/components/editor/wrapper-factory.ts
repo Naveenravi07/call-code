@@ -9,7 +9,6 @@ import { getAllOverrides } from './overrides';
 import * as vscode from 'vscode';
 import { createDefaultConfigParams } from './language-config';
 import type { LanguageSetup } from './types';
-import '@codingame/monaco-vscode-python-default-extension';
 
 export const createWrapperConfig = (setup: LanguageSetup, homeDir = '/home/shastri') => {
   const htmlContainer = document.getElementById('monaco-editor-root') as HTMLElement;
