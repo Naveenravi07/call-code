@@ -5,6 +5,7 @@ const helloPy = `
 `;
 
 const hello2Py = `
+    print("Hello world")
 
 `;
 export const pythonSetup: LanguageSetup = {

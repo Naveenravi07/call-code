@@ -13,15 +13,18 @@ import getSearchServiceOverride from '@codingame/monaco-vscode-search-service-ov
 import getDebugServiceOverride from '@codingame/monaco-vscode-debug-service-override';
 import getTestingServiceOverride from '@codingame/monaco-vscode-testing-service-override';
 import getPreferencesServiceOverride from '@codingame/monaco-vscode-preferences-service-override';
-
 import {
   defaultHtmlAugmentationInstructions,
   defaultViewsInit,
 } from 'monaco-editor-wrapper/vscode/services';
-import { createDefaultLocaleConfiguration } from 'monaco-languageclient/vscode/services';
+import {
+  createDefaultLocaleConfiguration,
+  VscodeApiConfig,
+} from 'monaco-languageclient/vscode/services';
 import { ConfigParams } from './types';
 
-export function getAllOverrides(configParams: ConfigParams) {
+/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/require-await */
+export function getAllOverrides(configParams: ConfigParams): VscodeApiConfig {
   return {
     serviceOverrides: {
       ...getKeybindingsServiceOverride(),
@@ -81,3 +84,4 @@ export function getAllOverrides(configParams: ConfigParams) {
     },
   };
 }
+/* eslint-enable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/require-await */
