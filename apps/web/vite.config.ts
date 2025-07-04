@@ -43,6 +43,7 @@ export default defineConfig({
             '@codingame/monaco-vscode-preferences-service-override',
             '@codingame/monaco-vscode-theme-defaults-default-extension', // for theme JSON loads
             '@codingame/monaco-vscode-files-service-override',
+            '@codingame/monaco-vscode-terminal-service-override',
             'vscode-oniguruma', // for onig.wasm
             'vscode-textmate',  // for TextMate grammars
             'vscode-languageclient'

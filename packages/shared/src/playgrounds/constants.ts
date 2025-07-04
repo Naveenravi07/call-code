@@ -26,7 +26,7 @@ export interface MeetingType {
 }
 
 
-export const playgroundList = [
+export const playgroundList : MeetingType[] = [
   {
     id: 'javascript',
     title: 'JavaScript',

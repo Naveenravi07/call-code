@@ -16,6 +16,7 @@ export type InitMessage = {
 export type LanguageSetup = {
   languageId: string;
   extensionName: string;
+  debugExtensionName: string;
   files: { [filename: string]: string };
   defaultFile: string;
   languageServerPath: string;
@@ -37,4 +38,5 @@ export type ConfigParams = {
   defaultFile: string;
   helpContainerCmd: string;
   debuggerExecCall: string;
+  debugExtensionName: string;
 };

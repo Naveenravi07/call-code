@@ -48,7 +48,7 @@ export const provideDebuggerExtensionConfig = (config: ConfigParams): ExtensionC
 
   return {
     config: {
-      name: config.extensionName,
+      name: config.debugExtensionName,
       publisher: 'TypeFox',
       version: '1.0.0',
       engines: {

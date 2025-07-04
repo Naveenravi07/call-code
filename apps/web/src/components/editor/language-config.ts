@@ -12,6 +12,7 @@ export const createDefaultConfigParams = (
   htmlContainer: HTMLElement | undefined,
   setup: LanguageSetup,
 ): ConfigParams => {
+  
   const files = new Map<string, FileDefinition>();
   const workspaceRoot = `${homeDir}/workspace`;
   const workspaceFile = vscode.Uri.file(`${homeDir}/.vscode/workspace.code-workspace`);
@@ -35,6 +36,7 @@ export const createDefaultConfigParams = (
 
   return {
     extensionName: setup.extensionName,
+    debugExtensionName: setup.debugExtensionName,
     languageId: setup.languageId,
     documentSelector: [setup.languageId],
     homeDir,

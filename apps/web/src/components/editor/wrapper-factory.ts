@@ -10,8 +10,8 @@ import * as vscode from 'vscode';
 import { createDefaultConfigParams } from './language-config';
 import type { LanguageSetup } from './types';
 
-export const createWrapperConfig = (setup: LanguageSetup, homeDir = '/home/shastri') => {
-  const htmlContainer = document.getElementById('monaco-editor-root') as HTMLElement;
+export const createWrapperConfig = (setup: LanguageSetup, homeDir = '/home/code') => {
+  const htmlContainer = document.body as HTMLElement;
   const configParams = createDefaultConfigParams(homeDir, htmlContainer, setup);
 
   const url = createUrl({
@@ -34,7 +34,7 @@ export const createWrapperConfig = (setup: LanguageSetup, homeDir = '/home/shast
     languageClientConfigs: {
       configs: {
         [setup.languageId]: {
-          name: `${setup.languageId} LSP`,
+          name: `Python Language Server Example`,
           connection: {
             options: {
               $type: 'WebSocketDirect',
@@ -44,9 +44,9 @@ export const createWrapperConfig = (setup: LanguageSetup, homeDir = '/home/shast
                 onCall: (client?: MonacoLanguageClient) => {
                   setTimeout(() => {
                     ['restartserver', 'organizeimports'].forEach(cmd =>
-                      vscode.commands.registerCommand(`${setup.languageId}.${cmd}`, (...args) => {
+                      vscode.commands.registerCommand(`${setup.languageServerPath}.${cmd}`, (...args) => {
                         client?.sendRequest('workspace/executeCommand', {
-                          command: `${setup.languageId}.${cmd}`,
+                          command: `${setup.languageServerPath}.${cmd}`,
                           arguments: args,
                         });
                       }),

@@ -1,19 +1,15 @@
 import { LanguageSetup } from '../types';
+import helloPyCode from '../dummy/hello.py?raw';
+import '@codingame/monaco-vscode-python-default-extension';
+import hello2PyCode from '../dummy/hello2.py?raw';
 
-const helloPy = `
-    print("Hello world")
-`;
-
-const hello2Py = `
-    print("Hello world")
-
-`;
 export const pythonSetup: LanguageSetup = {
   languageId: 'python',
+  debugExtensionName:'debugger-py-client',
   extensionName: 'mlc-python-example',
   files: {
-    'hello.py': helloPy,
-    'hello2.py': hello2Py,
+    'hello.py': helloPyCode,
+    'hello2.py': hello2PyCode,
   },
   defaultFile: 'hello2.py',
   languageServerPath: 'pyright',

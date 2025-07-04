@@ -23,6 +23,8 @@ import {
 } from 'monaco-languageclient/vscode/services';
 import { ConfigParams } from './types';
 
+
+
 /* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/require-await */
 export function getAllOverrides(configParams: ConfigParams): VscodeApiConfig {
   return {
@@ -48,6 +50,7 @@ export function getAllOverrides(configParams: ConfigParams): VscodeApiConfig {
       htmlAugmentationInstructions: defaultHtmlAugmentationInstructions,
       viewsInitFunc: defaultViewsInit,
     },
+    
     userConfiguration: {
       json: JSON.stringify({
         'workbench.colorTheme': 'Default Dark Modern',
@@ -77,10 +80,10 @@ export function getAllOverrides(configParams: ConfigParams): VscodeApiConfig {
       configurationDefaults: {
         'window.title': '${dirty}${activeEditorShort}',
       },
-      productConfiguration: {
-        nameShort: 'monaco-example',
-        nameLong: 'Monaco Editor Example',
-      },
+      "productConfiguration": {
+        "nameLong": "Callcode-playground",
+        "nameShort": "cc-playground"
+    },
     },
   };
 }
