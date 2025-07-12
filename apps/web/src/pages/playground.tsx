@@ -22,6 +22,7 @@ export default function Playground() {
       try {
         let body = JSON.parse(e.data);
         let pl_status = playGroundStatusSchema.parse(body)
+        console.log(pl_status)
       } catch (err) {
         console.error(`Error while parsing message ${err}`)
       }

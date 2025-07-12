@@ -4,6 +4,7 @@ import vsixPlugin from '@codingame/monaco-vscode-rollup-vsix-plugin';
 import importMetaUrlPlugin from '@codingame/esbuild-import-meta-url-plugin';
 import { defineConfig } from 'vite';
 
+
 export default defineConfig({
     plugins: [react(), vsixPlugin()],
     resolve: {
@@ -49,5 +50,8 @@ export default defineConfig({
             'vscode-languageclient'
         ]
     },
+    worker:{
+        format:'es'
+    }
 });
 
