@@ -1,7 +1,5 @@
 import { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -11,6 +9,9 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { playgroundList } from '@repo/shared/playgrounds/constants';
+import instance from '@/axios/axios.config';
+import { useNavigate } from '@tanstack/react-router';
+import { playGroundCreationResponseSchema } from '@repo/shared';
 
 interface PlayGroundCreationPopUpProps {
   isOpen: boolean;
@@ -18,19 +19,33 @@ interface PlayGroundCreationPopUpProps {
 }
 
 export default function PlayGroundCreationPopUp({ isOpen, onClose }: PlayGroundCreationPopUpProps) {
+  const navigate = useNavigate({ from: '/' });
   const [selectedMeetingType, setSelectedMeetingType] = useState<string | null>(null);
-  const [meetingName, setMeetingName] = useState('');
 
   const handleMeetingTypeSelect = (typeId: string) => {
     setSelectedMeetingType(typeId);
   };
 
-  const handleSubmit = () => {
-    if (selectedMeetingType && meetingName.trim()) {
-      console.log('Creating meeting:', { type: selectedMeetingType, name: meetingName });
+  const handleSubmit = async () => {
+    if (selectedMeetingType) {
+      console.log('Creating meeting:', { type: selectedMeetingType });
+
+      await instance
+        .post('/playgrounds/create', {
+          playground: selectedMeetingType,
+        })
+        .then(resp => {
+          let response = playGroundCreationResponseSchema.parse(resp.data)
+          navigate({
+            to: '/playground',
+            search: {
+              session_name: response.session_name,
+            },
+          });
+        })
+        .catch(err => console.error(err));
 
       setSelectedMeetingType(null);
-      setMeetingName('');
       onClose();
     }
   };
@@ -38,7 +53,6 @@ export default function PlayGroundCreationPopUp({ isOpen, onClose }: PlayGroundC
   useEffect(() => {
     if (!isOpen) {
       setSelectedMeetingType(null);
-      setMeetingName('');
     }
   }, [isOpen]);
 
@@ -84,32 +98,17 @@ export default function PlayGroundCreationPopUp({ isOpen, onClose }: PlayGroundC
         {selectedMeetingType && (
           <div className="mt-6 p-4 border rounded-lg bg-gray-50">
             <div className="space-y-4">
-              <div>
-                <Label htmlFor="meeting-name" className="text-sm font-medium">
-                  Meeting Name
-                </Label>
-                <Input
-                  id="meeting-name"
-                  placeholder="Enter meeting name..."
-                  value={meetingName}
-                  onChange={e => setMeetingName(e.target.value)}
-                  className="mt-1"
-                />
-              </div>
               <div className="flex gap-2 justify-end">
                 <Button
                   variant="outline"
                   onClick={() => {
                     setSelectedMeetingType(null);
-                    setMeetingName('');
                     onClose();
                   }}
                 >
                   Cancel
                 </Button>
-                <Button onClick={() => void handleSubmit()} disabled={!meetingName.trim()}>
-                  Create Meeting
-                </Button>
+                <Button onClick={() => void handleSubmit()}>Create Meeting</Button>
               </div>
             </div>
           </div>

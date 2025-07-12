@@ -44,6 +44,12 @@ const playgroundRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/playground',
   component: Playground,
+  validateSearch: (search) => {
+    return {
+      session_name: search.session_name as string | undefined,
+    };
+  },
+
 });
 
 const routeTree = rootRoute.addChildren([

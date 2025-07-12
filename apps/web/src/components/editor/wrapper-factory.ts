@@ -11,7 +11,7 @@ import { createDefaultConfigParams } from './language-config';
 import type { LanguageSetup } from './types';
 
 export const createWrapperConfig = (setup: LanguageSetup, homeDir = '/home/code') => {
-  const htmlContainer = document.body as HTMLElement;
+  const htmlContainer = document.body;
   const configParams = createDefaultConfigParams(homeDir, htmlContainer, setup);
 
   const url = createUrl({
@@ -44,12 +44,15 @@ export const createWrapperConfig = (setup: LanguageSetup, homeDir = '/home/code'
                 onCall: (client?: MonacoLanguageClient) => {
                   setTimeout(() => {
                     ['restartserver', 'organizeimports'].forEach(cmd =>
-                      vscode.commands.registerCommand(`${setup.languageServerPath}.${cmd}`, (...args) => {
-                        client?.sendRequest('workspace/executeCommand', {
-                          command: `${setup.languageServerPath}.${cmd}`,
-                          arguments: args,
-                        });
-                      }),
+                      vscode.commands.registerCommand(
+                        `${setup.languageServerPath}.${cmd}`,
+                        async (...args) => {
+                          await client?.sendRequest('workspace/executeCommand', {
+                            command: `${setup.languageServerPath}.${cmd}`,
+                            arguments: args,
+                          });
+                        },
+                      ),
                     );
                   }, 250);
                 },

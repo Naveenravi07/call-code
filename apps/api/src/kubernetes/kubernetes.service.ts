@@ -74,14 +74,13 @@ export class KubernetesService implements OnModuleInit {
         {
           version,
           group,
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+
           body: virtualServiceSpec,
           plural,
           namespace,
         },
       );
 
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       return response as unknown;
     } catch (error) {
       console.log(error);

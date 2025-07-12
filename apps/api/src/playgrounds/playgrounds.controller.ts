@@ -18,6 +18,7 @@ import { GetUser } from 'src/auth/decorators/auth.decorator';
 import { JwtUser } from '@repo/shared/user/schema';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { Public } from 'src/auth/guards/public.guard';
 
 @Controller('playgrounds')
 @UseGuards(JwtGuard)
@@ -38,6 +39,7 @@ export class PlaygroundsController {
   }
 
   @Sse('status')
+  @Public()
   watch_playground_status(
     @Query('sessionId') sessionId: string,
   ): Observable<MessageEvent> {

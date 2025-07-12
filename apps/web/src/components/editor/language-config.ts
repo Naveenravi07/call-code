@@ -12,9 +12,8 @@ export const createDefaultConfigParams = (
   htmlContainer: HTMLElement | undefined,
   setup: LanguageSetup,
 ): ConfigParams => {
-  
   const files = new Map<string, FileDefinition>();
-  const workspaceRoot = `${homeDir}/workspace`;
+  const workspaceRoot = `${homeDir}/code`;
   const workspaceFile = vscode.Uri.file(`${homeDir}/.vscode/workspace.code-workspace`);
 
   for (const [filename, code] of Object.entries(setup.files)) {

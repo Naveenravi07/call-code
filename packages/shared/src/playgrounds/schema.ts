@@ -37,12 +37,17 @@ export const playGroundStatusSchema = z.object({
     updateCount: z.number(),
     lastChecked: z.string().datetime(), 
 });
-
 export type PlayGroundStatus = z.infer<typeof playGroundStatusSchema>;
+
+export const playGroundCreationResponseSchema = z.object({
+    session_name: z.string(),
+    status: playGroundStatusSchema
+})
+
+export type PlaygroundCreationResponse = z.infer<typeof playGroundCreationResponseSchema>
 
 export const createPlaygroundSchema = z.object({
     playground: playgroundTypesSchema,
 });
-
 export type CreatePlayground = z.infer<typeof createPlaygroundSchema>; 
 

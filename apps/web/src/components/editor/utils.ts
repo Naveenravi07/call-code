@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { RegisteredMemoryFile } from '@codingame/monaco-vscode-files-service-override';
 import type { IStoredWorkspace } from '@codingame/monaco-vscode-configuration-service-override';
 import { Uri } from 'vscode';
@@ -75,7 +76,7 @@ export const provideDebuggerExtensionConfig = (config: ConfigParams): ExtensionC
   };
 };
 
-export const configureDebugging = async (api: typeof vscode, config: ConfigParams) => {
+export const configureDebugging = (api: typeof vscode, config: ConfigParams) => {
   class WebsocketDebugAdapter implements vscode.DebugAdapter {
     private websocket: WebSocket;
 
