@@ -7,8 +7,8 @@ import {
   LucideIcon,
 } from 'lucide-react';
 
-export interface MeetingType {
-  id: string;
+export interface Playground {
+  id: PlaygroundType;
   title: string;
   description: string;
   icon: LucideIcon;
@@ -16,41 +16,13 @@ export interface MeetingType {
   web: boolean
 }
 
-export const playgroundList : MeetingType[] = [
+export enum PlaygroundType {
+  VITE = 'vite',
+}
+
+export const playgroundList : Playground[] = [
   {
-    id: 'typescript',
-    title: 'TypeScript',
-    description: 'Typed superset of JavaScript',
-    icon: FileCode,
-    color: 'text-blue-600',
-    web: false
-  },
-  {
-    id: 'python',
-    title: 'Python',
-    description: 'General-purpose programming language',
-    icon: Terminal,
-    color: 'text-green-600',
-    web: false
-  },
-  {
-    id: 'go',
-    title: 'Go',
-    description: 'Compiled systems programming language',
-    icon: Zap,
-    color: 'text-cyan-600',
-    web: false
-  },
-  {
-    id: 'flask',
-    title: 'Flask',
-    description: 'Lightweight Python web framework',
-    icon: Droplet,
-    color: 'text-gray-500',
-    web: true
-  },
-  {
-    id: 'vite',
+    id: PlaygroundType.VITE,
     title: 'Vite',
     description: 'Blazingly fast web framework',
     icon: Droplet,
@@ -59,4 +31,3 @@ export const playgroundList : MeetingType[] = [
   },
 ] as const;
 
-export const playgroundListById = playgroundList.map(obj => obj.id) as unknown as [string, ...string[]];

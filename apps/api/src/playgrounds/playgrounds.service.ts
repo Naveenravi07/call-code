@@ -4,10 +4,10 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { KubernetesService } from 'src/kubernetes/kubernetes.service';
+import { KubernetesService } from '../kubernetes/kubernetes.service';
 import namor from 'namor';
-import { manifestRegistry } from 'src/kubernetes/helper/manifest-registry';
-import { RedisService } from 'src/redis/redis.service';
+import { manifestRegistry } from '../kubernetes/helper/manifest-registry';
+import { RedisService } from '../redis/redis.service';
 import { V1JobStatus } from '@kubernetes/client-node';
 import { Observable, Observer } from 'rxjs';
 import {
@@ -16,6 +16,7 @@ import {
   PlaygroundCreationResponse,
 } from '@repo/shared/playgrounds/schema';
 import axios from 'axios';
+import { PlaygroundType } from '@repo/shared/playgrounds/schema';
 
 @Injectable()
 export class PlaygroundsService {
@@ -34,7 +35,7 @@ export class PlaygroundsService {
   }
 
   async createPlayground(
-    playground_type: string,
+    playground_type: PlaygroundType,
     user_id: string,
   ): Promise<PlaygroundCreationResponse> {
     const session_name = namor.generate({ words: 2, saltLength: 0 });

@@ -3,6 +3,7 @@ import { getViteJobManifest } from './manifest/job';
 import { getViteServiceManifest } from './manifest/service';
 import { getViteVirtualServiceManifest } from './manifest/virtual-service';
 import type { V1VirtualService } from './templates/virtual-service-template';
+import { PlaygroundType } from '@repo/shared/playgrounds/schema';
 
 interface ManifestGenerator {
   jobManifest: (userId: string, sessionId: string) => V1Job;
@@ -10,7 +11,7 @@ interface ManifestGenerator {
   virtualServiceManifest: (sessionId: string) => V1VirtualService;
 }
 
-export const manifestRegistry: Record<string, ManifestGenerator> = {
+export const manifestRegistry: Record<PlaygroundType, ManifestGenerator> = {
   vite: {
     jobManifest: getViteJobManifest,
     serviceManifest: getViteServiceManifest,
@@ -19,7 +20,7 @@ export const manifestRegistry: Record<string, ManifestGenerator> = {
 };
 
 export function getManifestGenerator(
-  playgroundType: string,
+  playgroundType: PlaygroundType,
 ): ManifestGenerator {
   const generator = manifestRegistry[playgroundType];
   if (!generator) {

@@ -8,7 +8,7 @@ import {
   V1Service,
   Watch,
 } from '@kubernetes/client-node';
-import { PlaygroundsService } from 'src/playgrounds/playgrounds.service';
+import { PlaygroundsService } from '../playgrounds/playgrounds.service';
 import { V1VirtualService } from './helper/templates/virtual-service-template';
 
 @Injectable()

@@ -1,8 +1,9 @@
 import { z } from 'zod';
-import { playgroundList } from './constants';
+import { PlaygroundType } from './constants';
+export { PlaygroundType };
 
-export const playgroundTypesSchema = z.enum(playgroundList.map(type => type.id) as [string, ...string[]]);
-export type PlaygroundTypes = z.infer<typeof playgroundTypesSchema>;
+export const playgroundTypesSchema = z.nativeEnum(PlaygroundType);
+
 
 export const jobStatusSchema = z.object({
     ready: z.boolean(),
