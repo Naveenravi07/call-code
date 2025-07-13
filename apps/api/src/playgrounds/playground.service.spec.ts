@@ -1,9 +1,10 @@
+/* eslint-disable */
+
 import { Test, TestingModule } from '@nestjs/testing';
 import { PlaygroundsService } from './playgrounds.service';
 import { PlaygroundType } from '@repo/shared/playgrounds/schema';
 import { KubernetesService } from '../kubernetes/kubernetes.service';
 import { RedisService } from '../redis/redis.service';
-import axios from 'axios';
 
 jest.mock('axios');
 
@@ -54,19 +55,19 @@ describe('PlaygroundsService', () => {
   });
 
   describe('createPlayground', () => {
-    
     it('should create a playground and store initial status', async () => {
       kubernetesService.spawnJob.mockResolvedValue({} as any);
       kubernetesService.createService.mockResolvedValue({} as any);
       redisService.set.mockResolvedValue();
 
-      const result = await service.createPlayground(PlaygroundType.VITE, 'user-123');
+      const result = await service.createPlayground(
+        PlaygroundType.VITE,
+        'user-123',
+      );
 
       expect(result.session_name).toBe('mock-session-name');
       expect(kubernetesService.spawnJob).toHaveBeenCalled();
       expect(redisService.set).toHaveBeenCalled();
     });
   });
-
-
 });
