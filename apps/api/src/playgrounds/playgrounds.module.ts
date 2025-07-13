@@ -9,7 +9,7 @@ import { PlaygroundStatusService } from './playground.status.service';
 @Module({
   imports: [RedisModule, forwardRef(() => KubernetesModule), AuthModule],
   controllers: [PlaygroundsController],
-  providers: [PlaygroundsService,PlaygroundStatusService],
-  exports: [PlaygroundsService,PlaygroundStatusService],
+  providers: [PlaygroundsService, PlaygroundStatusService],
+  exports: [PlaygroundsService, PlaygroundStatusService],
 })
 export class PlaygroundsModule {}

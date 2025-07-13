@@ -24,7 +24,7 @@ export class KubernetesService implements OnModuleInit {
   constructor(
     @Inject(forwardRef(() => PlaygroundsService))
     private readonly playgroundsService: PlaygroundsService,
-    private readonly statusService: PlaygroundStatusService
+    private readonly statusService: PlaygroundStatusService,
   ) {
     this.kubernetesClient = new KubeConfig();
     this.kubernetesClient.loadFromDefault();
