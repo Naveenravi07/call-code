@@ -292,6 +292,9 @@ importers:
       devalue:
         specifier: ^5.1.1
         version: 5.1.1
+      framer-motion:
+        specifier: ^12.23.6
+        version: 12.23.6(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       globals:
         specifier: ^16.3.0
         version: 16.3.0
@@ -3948,6 +3951,20 @@ packages:
   fraction.js@4.3.7:
     resolution: {integrity: sha512-ZsDfxO51wGAXREY55a7la9LScWpwv9RxIrYABrlvOFBlH/ShPnrtsXeuUIfXKKOVicNxQ+o8JTbJvjS4M89yew==}
 
+  framer-motion@12.23.6:
+    resolution: {integrity: sha512-dsJ389QImVE3lQvM8Mnk99/j8tiZDM/7706PCqvkQ8sSCnpmWxsgX+g0lj7r5OBVL0U36pIecCTBoIWcM2RuKw==}
+    peerDependencies:
+      '@emotion/is-prop-valid': '*'
+      react: ^18.0.0 || ^19.0.0
+      react-dom: ^18.0.0 || ^19.0.0
+    peerDependenciesMeta:
+      '@emotion/is-prop-valid':
+        optional: true
+      react:
+        optional: true
+      react-dom:
+        optional: true
+
   fresh@2.0.0:
     resolution: {integrity: sha512-Rx/WycZ60HOaqLKAi6cHRKKI7zxWbJ31MhntmtwMoaTeF7XFH9hhBp8vITaMidfljRQ6eYWCKkaTK+ykVJHP2A==}
     engines: {node: '>= 0.8'}
@@ -4671,6 +4688,12 @@ packages:
   monaco-languageclient@9.7.1:
     resolution: {integrity: sha512-h62DXXm3KZ8u2gEKNlywBmANwmbPPOMg3ko0tezD2qRz8aqdk4Bn9yYYfTiZ/4ntlC9cYdQIMTrcUES4YFJr/w==}
     engines: {node: '>=20.10.0', npm: '>=10.2.3'}
+
+  motion-dom@12.23.6:
+    resolution: {integrity: sha512-G2w6Nw7ZOVSzcQmsdLc0doMe64O/Sbuc2bVAbgMz6oP/6/pRStKRiVRV4bQfHp5AHYAKEGhEdVHTM+R3FDgi5w==}
+
+  motion-utils@12.23.6:
+    resolution: {integrity: sha512-eAWoPgr4eFEOFfg2WjIsMoqJTW6Z8MTUCgn/GZ3VRpClWBdnbjryiA3ZSNLyxCTmCQx4RmYX6jX1iWHbenUPNQ==}
 
   ms@2.1.3:
     resolution: {integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==}
@@ -10615,6 +10638,15 @@ snapshots:
 
   fraction.js@4.3.7: {}
 
+  framer-motion@12.23.6(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+    dependencies:
+      motion-dom: 12.23.6
+      motion-utils: 12.23.6
+      tslib: 2.8.1
+    optionalDependencies:
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+
   fresh@2.0.0: {}
 
   fs-extra@10.1.0:
@@ -11503,6 +11535,12 @@ snapshots:
       '@codingame/monaco-vscode-model-service-override': 17.2.1
       vscode: '@codingame/monaco-vscode-extension-api@17.2.1'
       vscode-languageclient: 9.0.1
+
+  motion-dom@12.23.6:
+    dependencies:
+      motion-utils: 12.23.6
+
+  motion-utils@12.23.6: {}
 
   ms@2.1.3: {}
 

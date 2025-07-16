@@ -6,6 +6,8 @@ export const playgroundTypesSchema = z.nativeEnum(PlaygroundType);
 
 const jobPhases = z.enum(['Pending', 'Running', 'Succeeded', 'Failed', 'Unknown']).optional()
 export type JobPhases = z.infer<typeof jobPhases>
+
+
 export const jobStatusSchema = z.object({
     ready: z.boolean(),
     phase: jobPhases,
@@ -28,6 +30,7 @@ export const playGroundStatusSchema = z.object({
     job: jobStatusSchema,
     service: serviceStatusSchema,
     virtual_service: virtualServiceSchema,
+    ready: z.boolean(),
     statusHistory: z.array(z.string()), 
     updateCount: z.number(),
     lastChecked: z.string().datetime(), 

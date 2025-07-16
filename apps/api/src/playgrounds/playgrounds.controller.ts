@@ -19,14 +19,12 @@ import { JwtUser } from '@repo/shared/user/schema';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Public } from 'src/auth/guards/public.guard';
-import { PlaygroundStatusService } from './playground.status.service';
 
 @Controller('playgrounds')
 @UseGuards(JwtGuard)
 export class PlaygroundsController {
   constructor(
     private readonly playgroundsService: PlaygroundsService,
-    private readonly statusService: PlaygroundStatusService,
   ) {}
 
   @Post('create')
@@ -47,7 +45,7 @@ export class PlaygroundsController {
   watch_playground_status(
     @Query('sessionId') sessionId: string,
   ): Observable<MessageEvent> {
-    return this.statusService.createStatusObserver(sessionId).pipe(
+    return this.playgroundsService.createStatusObserver(sessionId).pipe(
       map((data) => ({
         data: JSON.stringify(data),
       })),

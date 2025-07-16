@@ -10,6 +10,8 @@
   ],
   "compilerOptions": {
     "baseUrl": "./src",
+    "strictNullChecks": true,
+    "strict":true,
     "paths": {
       "@/components/*": ["./src/components/*"],
       "@/lib/utils/*": ["./src/lib/utils/*"],
