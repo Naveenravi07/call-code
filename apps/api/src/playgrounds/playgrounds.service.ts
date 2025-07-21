@@ -81,9 +81,11 @@ export class PlaygroundsService {
                         observer.next(status);
                         observer.complete();
                     } else {
+                        console.log("Error: Invalid status response");
                         observer.error(new Error('Invalid status response'));
                     }
                 } catch (error) {
+                    console.log("Error: Invalid status response v2");
                     console.log(error)
                     observer.error(error);
                 }

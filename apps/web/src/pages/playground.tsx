@@ -18,21 +18,26 @@ export default function Playground() {
             try {
                 let body = JSON.parse(e.data);
                 let pl_status = playGroundStatusSchema.parse(body)
+                
                 console.log(pl_status)
+                setPlStatus(pl_status)
+
                 if (pl_status.ready === true) {
-                    setPlStatus(pl_status)
                     setIsReady(true)
                     return
                 }
-                setPlStatus(pl_status)
             } catch (err) {
                 console.error(`Error while parsing message ${err}`)
                 setIsReady(false)
             }
         };
         eventSrc.onerror = error => {
-            console.error('SSE Error:', error);
             eventSrc.close();
+            if (eventSrc.readyState === EventSource.CLOSED ) {
+                console.log('SSE connection closed normally after ready=true');
+              } else {
+                console.error('SSE Error:', error);
+              }
         };
     }
 
@@ -43,12 +48,17 @@ export default function Playground() {
         handlePlaygroundStatusMsgs(eventSrc)
 
         return () => {
+            eventSrc.close()
         };
     }, [session_name]);
 
     return(
         <>
-            {isReady ? <Editor /> : <PlaygroundLoader status={plStatus} />}
+        {
+            isReady ? <Editor /> :
+            <PlaygroundLoader status={plStatus} />
+        }
+        
         </>
     )
 }

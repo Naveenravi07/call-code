@@ -17,7 +17,7 @@ import { JwtGuard } from 'src/auth/guards/jwt.guard';
 import { GetUser } from 'src/auth/decorators/auth.decorator';
 import { JwtUser } from '@repo/shared/user/schema';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 import { Public } from 'src/auth/guards/public.guard';
 
 @Controller('playgrounds')
@@ -46,9 +46,14 @@ export class PlaygroundsController {
     @Query('sessionId') sessionId: string,
   ): Observable<MessageEvent> {
     return this.playgroundsService.createStatusObserver(sessionId).pipe(
-      map((data) => ({
-        data: JSON.stringify(data),
-      })),
+      map((data) => {
+        console.log('Emitting data:', data);
+        return { data: JSON.stringify(data) };
+      }),
+      catchError((err) => {
+        console.error('Error in watch_playground_status:', err);
+        throw err; // Propagate the error to close the SSE connection
+      }),
     );
   }
 }
