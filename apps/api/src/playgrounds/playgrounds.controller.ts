@@ -23,9 +23,7 @@ import { Public } from 'src/auth/guards/public.guard';
 @Controller('playgrounds')
 @UseGuards(JwtGuard)
 export class PlaygroundsController {
-  constructor(
-    private readonly playgroundsService: PlaygroundsService,
-  ) {}
+  constructor(private readonly playgroundsService: PlaygroundsService) {}
 
   @Post('create')
   async createPlayground(
