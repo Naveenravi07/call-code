@@ -52,6 +52,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "devalue": "^5.1.1",
+    "framer-motion": "^12.23.6",
     "globals": "^16.3.0",
     "lucide-react": "^0.416.0",
     "monaco-editor-wrapper": "6.8.1",

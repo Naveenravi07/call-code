@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "baseUrl": "./src",
+    "strictNullChecks": true,
     "paths": {
       "@components/*": ["./src/components/*"],
       "@lib/utils/*": ["./src/lib/utils/*"],

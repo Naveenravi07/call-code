@@ -21,21 +21,22 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'npm'
 
       - name: Enable Corepack 
-        run: corepack enable
+        run: |
+                corepack enable
+                corepack prepare pnpm@latest --activate
 
       - name: Install root dependencies
-        run: npm install
+        run: pnpm install
 
       - name: Install API dependencies
         working-directory: apps/api
-        run: npm install
+        run: pnpm install
 
       - name: Install Web dependencies
         working-directory: apps/web
-        run: npm install
+        run: pnpm install
 
       - name: Inject .env from secret to apps/api
         run: |

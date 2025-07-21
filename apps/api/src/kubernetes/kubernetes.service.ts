@@ -10,6 +10,7 @@ import {
 } from '@kubernetes/client-node';
 import { PlaygroundsService } from '../playgrounds/playgrounds.service';
 import { V1VirtualService } from './helper/templates/virtual-service-template';
+import { PlaygroundStatusService } from '@/playgrounds/playground.status.service';
 
 @Injectable()
 export class KubernetesService implements OnModuleInit {
@@ -23,6 +24,7 @@ export class KubernetesService implements OnModuleInit {
   constructor(
     @Inject(forwardRef(() => PlaygroundsService))
     private readonly playgroundsService: PlaygroundsService,
+    private readonly statusService: PlaygroundStatusService,
   ) {
     this.kubernetesClient = new KubeConfig();
     this.kubernetesClient.loadFromDefault();
@@ -102,7 +104,7 @@ export class KubernetesService implements OnModuleInit {
             console.log(`[Watcher] Job ${jobName} added to ${phase}`);
             if (!jobName.includes('callcode-session-')) return;
 
-            await this.playgroundsService.updatePlaygroundStatus(
+            await this.statusService.updateFromJobEvent(
               jobName,
               phase,
               job.status,
