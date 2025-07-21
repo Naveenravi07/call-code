@@ -21,16 +21,14 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'pnpm'
 
       - name: Enable Corepack 
-        run: corepack enable
+        run: |
+                corepack enable
+                corepack prepare pnpm@latest --activate
 
       - name: Install root dependencies
-        run: npm install
-
-      - name: Install pnpm
-        run: npm install -g pnpm
+        run: pnpm install
 
       - name: Install API dependencies
         working-directory: apps/api
