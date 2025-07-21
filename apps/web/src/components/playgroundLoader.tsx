@@ -1,10 +1,9 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Check, Loader2 } from "lucide-react"
 import { PlayGroundStatus as PlaygroundStatus } from "@repo/shared"
-import { stat } from "fs"
 
 interface LoadingStep {
     id: string
