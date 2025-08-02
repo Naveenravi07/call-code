@@ -10,9 +10,9 @@ import * as vscode from 'vscode';
 import { createDefaultConfigParams } from './language-config';
 import type { LanguageSetup } from './types';
 
-export const createWrapperConfig = (setup: LanguageSetup, homeDir = '/home/code') => {
+export const createWrapperConfig = (setup: LanguageSetup,sessionId:string) => {
   const htmlContainer = document.body;
-  const configParams = createDefaultConfigParams(homeDir, htmlContainer, setup);
+  const configParams = createDefaultConfigParams(htmlContainer, setup,sessionId);
 
   const url = createUrl({
     secured: false,

@@ -55,7 +55,7 @@ export default function Playground() {
     return(
         <>
         {
-            isReady ? <Editor /> :
+            (session_name && isReady )  ? <Editor sessionId={session_name} /> :
             <PlaygroundLoader status={plStatus} />
         }
         

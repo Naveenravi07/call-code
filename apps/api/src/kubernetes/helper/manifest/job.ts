@@ -49,7 +49,7 @@ export function getViteJobManifest(userid: string, sessionid: string) {
       },
       {
         name: 'websocket',
-        image: 'shastri123/callcode-ws',
+        image: 'shastri123/callcode-ws-v2:v1',
         ports: [
           {
             containerPort: 8080,

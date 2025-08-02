@@ -8,7 +8,6 @@ export type FileDefinition = {
 
 export type InitMessage = {
   id: 'init';
-  files: Record<string, FileDefinition>;
   defaultFile: string;
   debuggerExecCall: string;
 };
@@ -17,7 +16,6 @@ export type LanguageSetup = {
   languageId: string;
   extensionName: string;
   debugExtensionName: string;
-  files: { [filename: string]: string };
   defaultFile: string;
   languageServerPath: string;
   debuggerCommand?: string;
@@ -34,7 +32,6 @@ export type ConfigParams = {
   protocol: 'ws' | 'wss';
   hostname: string;
   port: number;
-  files: Map<string, FileDefinition>;
   defaultFile: string;
   helpContainerCmd: string;
   debuggerExecCall: string;
