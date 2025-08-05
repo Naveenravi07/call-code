@@ -34,7 +34,7 @@ export const createWrapperConfig = (setup: LanguageSetup,sessionId:string) => {
     languageClientConfigs: {
       configs: {
         [setup.languageId]: {
-          name: `Python Language Server Example`,
+          name: `Language Server Example`,
           connection: {
             options: {
               $type: 'WebSocketDirect',

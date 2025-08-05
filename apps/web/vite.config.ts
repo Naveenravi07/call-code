@@ -27,6 +27,7 @@ export default defineConfig({
         include: [
             '@codingame/monaco-vscode-api',
             '@codingame/monaco-vscode-python-default-extension',
+            '@codingame/monaco-vscode-typescript-basics-default-extension',
             '@codingame/monaco-vscode-keybindings-service-override',
             '@codingame/monaco-vscode-lifecycle-service-override',
             '@codingame/monaco-vscode-localization-service-override',
