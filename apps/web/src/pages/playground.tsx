@@ -4,9 +4,12 @@ import { useEffect, useState } from 'react';
 import { playGroundStatusSchema, type PlayGroundStatus } from '@repo/shared';
 import PlaygroundLoader from '@/components/playgroundLoader';
 import FileTree from '@/components/editor/Filetree';
-import CodePlayground from '@/components/editor/Playground';
-import { Moon, Sun } from 'lucide-react';
+import { TerminalIcon } from 'lucide-react';
+import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/resizable';
 import { useIDEStore } from '@/store/ideStore';
+import { Button } from '@/components/ui/button';
+import BrowserPreview from '@/components/editor/BrowserPreview';
+import Terminal from '@/components/editor/Terminal';
 
 export default function Playground() {
   const { session_name } = useSearch({
@@ -15,26 +18,8 @@ export default function Playground() {
   const { setConnUrl } = useIDEStore();
   const [isReady, setIsReady] = useState<boolean>(false);
   const [plStatus, setPlStatus] = useState<PlayGroundStatus | undefined>(undefined);
+  const { isTerminalOpen, toggleTerminal } = useIDEStore();
   const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
-
-  // Toggle dark mode
-  const toggleDarkMode = () => {
-    const newMode = !isDarkMode;
-    setIsDarkMode(newMode);
-    if (newMode) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  };
-
-  useEffect(() => {
-    const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    setIsDarkMode(isDark);
-    if (isDark) {
-      document.documentElement.classList.add('dark');
-    }
-  }, []);
 
   const handlePlaygroundStatusMsgs = (eventSrc: EventSource) => {
     eventSrc.onmessage = e => {
@@ -67,6 +52,17 @@ export default function Playground() {
   };
 
   useEffect(() => {
+    const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    setIsDarkMode(isDark);
+    if (isDark) {
+      document.documentElement.classList.add('dark');
+    }
+    return () => {
+      document.documentElement.classList.remove('dark');
+    };
+  }, []);
+
+  useEffect(() => {
     if (!session_name) return;
 
     const eventSrc = new EventSource(
@@ -83,24 +79,71 @@ export default function Playground() {
     <div className={`min-h-screen ${isDarkMode ? 'dark' : ''}`}>
       {session_name && isReady ? (
         <>
-          <div className="absolute top-4 right-4 z-50">
-            <button
-              onClick={toggleDarkMode}
-              className="p-2 rounded-lg bg-card border border-border hover:bg-accent transition-colors"
-              title={isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'}
-            >
-              {isDarkMode ? (
-                <Sun className="w-5 h-5 text-foreground" />
-              ) : (
-                <Moon className="w-5 h-5 text-foreground" />
-              )}
-            </button>
-          </div>
+          <div className="h-screen flex flex-col">
+            {/* Header/Toolbar */}
+            <div className="h-10 bg-ide-tab border-b border-ide-tab-border flex items-center px-4">
+              <div className="flex items-center gap-2"></div>
+              <div className="flex-1 text-center">
+                <span className="text-sm text-muted-foreground font-medium">
+                  Call-code Playground
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={toggleTerminal}
+                  className="flex items-center gap-2"
+                >
+                  <TerminalIcon className="w-4 h-4" />
+                  Terminal
+                </Button>
+              </div>
+            </div>
 
-          <div className="flex-1 flex overflow-hidden bg-background">
-            <FileTree />
-            <Editor />
-            <CodePlayground />
+            {/* Main IDE Layout */}
+            <div className="flex-1 flex flex-col overflow-hidden">
+              <ResizablePanelGroup direction="vertical">
+                <ResizablePanel defaultSize={isTerminalOpen ? 70 : 100}>
+                  <div className="h-full flex">
+                    <ResizablePanelGroup direction="horizontal">
+                      <ResizablePanel defaultSize={80} minSize={30}>
+                        <div className="flex h-full">
+                          <div className="w-[250px] min-w-[200px] max-w-[300px] h-full overflow-y-auto">
+                            <FileTree />
+                          </div>
+
+                          <div className="flex-1 h-full overflow-y-auto">
+                            <div className="min-h-full">
+                              <Editor />
+                            </div>
+                          </div>
+                        </div>
+                      </ResizablePanel>
+
+                      <ResizableHandle withHandle />
+
+                      <ResizablePanel defaultSize={20} minSize={15}>
+                        <div className="h-full overflow-y-auto">
+                          <BrowserPreview />
+                        </div>
+                      </ResizablePanel>
+                    </ResizablePanelGroup>
+                  </div>
+                </ResizablePanel>
+
+                {isTerminalOpen && (
+                  <>
+                    <ResizableHandle withHandle />
+                    <ResizablePanel defaultSize={30} minSize={15}>
+                      <div className="h-full overflow-y-auto">
+                        <Terminal />
+                      </div>
+                    </ResizablePanel>
+                  </>
+                )}
+              </ResizablePanelGroup>
+            </div>
           </div>
         </>
       ) : (
