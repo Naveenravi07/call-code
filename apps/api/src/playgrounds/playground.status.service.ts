@@ -132,7 +132,7 @@ export class PlaygroundStatusService {
 
   private async checkSingleHost(host: string): Promise<boolean> {
     try {
-      const res = await axios.get(`http://${host}/healthz`, { timeout: 1000 });
+      const res = await axios.get(`http://${host}`, { timeout: 1000 });
       console.log(`✅ Host ${host} ready`);
       return res.status === 200;
     } catch (err) {
