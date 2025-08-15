@@ -4,7 +4,7 @@ import LoginPage from './pages/login';
 import AuthSuccess from './pages/authsucess';
 import Playground from './pages/playground';
 import FileTree from './components/editor/Filetree';
-import CodePlayGround from './components/editor/Playground'
+import CodePlayGround from './components/editor/Playground';
 import Editor from './components/editor/Editor';
 
 // Create a root component to wrap the routes
@@ -73,7 +73,7 @@ const routeTree = rootRoute.addChildren([
   loginRoute,
   authSuccessRoute,
   playgroundRoute,
-  testRoute
+  testRoute,
 ]);
 
 export const router = createRouter({

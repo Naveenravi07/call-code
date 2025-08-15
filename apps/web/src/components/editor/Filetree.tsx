@@ -1,20 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { FileNode, useIDEStore } from '@/store/ideStore';
-import { fetchFileStructure, fetchFileContent } from '@/services/ide-api';
-import { 
-  ChevronRight, 
-  ChevronDown, 
-  Folder, 
-  FolderOpen, 
-  FileText, 
+import { fetchFileStructure } from '@/services/ide-api';
+import {
+  ChevronRight,
+  ChevronDown,
+  Folder,
+  FolderOpen,
+  FileText,
   FileCode,
   FileType,
-  Loader2
+  Loader2,
 } from 'lucide-react';
 
-const getFileIcon = (fileName: string, language?: string) => {
+const getFileIcon = (fileName: string) => {
   const ext = fileName.split('.').pop()?.toLowerCase();
-  
+
   switch (ext) {
     case 'tsx':
     case 'ts':
@@ -42,15 +42,14 @@ interface FileTreeItemProps {
 }
 
 const FileTreeItem: React.FC<FileTreeItemProps> = ({ node, depth }) => {
-  const [isExpanded, setIsExpanded] = useState(depth < 2); // Auto-expand first 2 levels
-  const { activeFile, openFile, setFileContent, setLoading } = useIDEStore();
+  const [isExpanded, setIsExpanded] = useState(depth < 2);
+  const { activeFile, openFile } = useIDEStore();
   const isSelected = activeFile === node.path;
 
-  const handleClick = async () => {
+  const handleClick = () => {
     if (node.type === 'folder') {
       setIsExpanded(!isExpanded);
     } else {
-      // Only set the active file here, content will be fetched by Editor component
       openFile(node.path);
     }
   };
@@ -81,19 +80,21 @@ const FileTreeItem: React.FC<FileTreeItemProps> = ({ node, depth }) => {
           </>
         ) : (
           <>
-            <div className="w-4 mr-1" /> {/* Spacer for alignment */}
-            {getFileIcon(node.name, node.language)}
+            <div className="w-4 mr-1" />
+            {getFileIcon(node.name)}
             <span className="ml-2" />
           </>
         )}
-        <span className={`text-sm ${node.type === 'folder' ? 'text-file-tree-folder' : 'text-file-tree-file'}`}>
+        <span
+          className={`text-sm ${node.type === 'folder' ? 'text-file-tree-folder' : 'text-file-tree-file'}`}
+        >
           {node.name}
         </span>
       </div>
-      
+
       {node.type === 'folder' && isExpanded && node.children && (
         <div>
-          {node.children.map((child) => (
+          {node.children.map(child => (
             <FileTreeItem key={child.id} node={child} depth={depth + 1} />
           ))}
         </div>
@@ -103,13 +104,14 @@ const FileTreeItem: React.FC<FileTreeItemProps> = ({ node, depth }) => {
 };
 
 const FileTree: React.FC = () => {
-  const { files, setFiles, loading } = useIDEStore();
+  const { files, setFiles, connurl } = useIDEStore();
   const [initialLoading, setInitialLoading] = useState(true);
 
   useEffect(() => {
+    if(!connurl) return;
     const loadFiles = async () => {
       try {
-        const fileStructure = await fetchFileStructure();
+        const fileStructure = await fetchFileStructure(connurl);
         setFiles(fileStructure);
       } catch (error) {
         console.error('Error fetching file structure:', error);
@@ -117,9 +119,9 @@ const FileTree: React.FC = () => {
         setInitialLoading(false);
       }
     };
-    
-    loadFiles();
-  }, [setFiles]);
+
+    loadFiles(); // eslint-disable-line
+  }, [connurl,setFiles]);
 
   if (initialLoading) {
     return (
@@ -132,12 +134,10 @@ const FileTree: React.FC = () => {
   return (
     <div className="w-64 h-full overflow-y-auto bg-ide-sidebar border-r border-ide-sidebar-border">
       <div className="p-3 border-b border-ide-sidebar-border">
-        <h2 className="text-sm font-semibold text-foreground uppercase tracking-wide">
-          Explorer
-        </h2>
+        <h2 className="text-sm font-semibold text-foreground uppercase tracking-wide">Explorer</h2>
       </div>
       <div className="py-2">
-        {files.map((node) => (
+        {files.map(node => (
           <FileTreeItem key={node.id} node={node} depth={0} />
         ))}
       </div>

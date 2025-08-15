@@ -29,6 +29,17 @@
     --chart-3: 197 37% 24%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
+    
+    /* IDE-specific colors */
+    --ide-sidebar: 0 0% 98%;
+    --ide-sidebar-border: 214.3 31.8% 91.4%;
+    --ide-sidebar-hover: 210 40% 96.1%;
+    --ide-tab: 0 0% 100%;
+    --ide-tab-active: 210 40% 96.1%;
+    --ide-tab-border: 214.3 31.8% 91.4%;
+    --file-tree-folder: 217.2 32.6% 17.5%;
+    --file-tree-file: 215.4 16.3% 46.9%;
+    --file-tree-selected: 222.2 47.4% 11.2%;
   }
 
   .dark {
@@ -56,6 +67,17 @@
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
+    
+    /* IDE-specific colors for dark mode */
+    --ide-sidebar: 222.2 84% 4.9%;
+    --ide-sidebar-border: 217.2 32.6% 17.5%;
+    --ide-sidebar-hover: 217.2 32.6% 17.5%;
+    --ide-tab: 222.2 84% 4.9%;
+    --ide-tab-active: 217.2 32.6% 17.5%;
+    --ide-tab-border: 217.2 32.6% 17.5%;
+    --file-tree-folder: 210 40% 98%;
+    --file-tree-file: 215 20.2% 65.1%;
+    --file-tree-selected: 210 40% 98%;
   }
 }
 
@@ -65,6 +87,51 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+  
+  /* IDE-specific color utilities */
+  .bg-ide-sidebar {
+    background-color: hsl(var(--ide-sidebar));
+  }
+  
+  .bg-ide-sidebar-hover {
+    background-color: hsl(var(--ide-sidebar-hover));
+  }
+  
+  .bg-ide-tab {
+    background-color: hsl(var(--ide-tab));
+  }
+  
+  .bg-ide-tab-active {
+    background-color: hsl(var(--ide-tab-active));
+  }
+  
+  .border-ide-sidebar-border {
+    border-color: hsl(var(--ide-sidebar-border));
+  }
+  
+  .border-ide-tab-border {
+    border-color: hsl(var(--ide-tab-border));
+  }
+  
+  .text-file-tree-folder {
+    color: hsl(var(--file-tree-folder));
+  }
+  
+  .text-file-tree-file {
+    color: hsl(var(--file-tree-file));
+  }
+  
+  .text-file-tree-selected {
+    color: hsl(var(--file-tree-selected));
+  }
+  
+  .bg-file-tree-selected\/20 {
+    background-color: hsl(var(--file-tree-selected) / 0.2);
+  }
+  
+  .border-file-tree-selected {
+    border-color: hsl(var(--file-tree-selected));
   }
 }
   #sidebarDiv,

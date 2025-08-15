@@ -21,7 +21,7 @@ const Playground: React.FC = () => {
 
     try {
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
+
       const mockOutput = [
         `> Running ${activeFile.split('/').pop()}`,
         '> Compiling...',
@@ -31,9 +31,9 @@ const Playground: React.FC = () => {
         'React component rendered successfully',
         'No errors found',
         '',
-        '> Execution completed in 1.2s'
+        '> Execution completed in 1.2s',
       ];
-      
+
       setOutput(mockOutput);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unknown error occurred');
@@ -64,7 +64,7 @@ const Playground: React.FC = () => {
             <Settings className="w-4 h-4" />
           </Button>
         </div>
-        
+
         {/* Controls */}
         <div className="flex gap-2">
           <Button
@@ -81,21 +81,12 @@ const Playground: React.FC = () => {
             )}
             {isRunning ? 'Running...' : 'Run'}
           </Button>
-          
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={stopExecution}
-            disabled={!isRunning}
-          >
+
+          <Button variant="outline" size="sm" onClick={stopExecution} disabled={!isRunning}>
             <Square className="w-4 h-4" />
           </Button>
-          
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={clearOutput}
-          >
+
+          <Button variant="outline" size="sm" onClick={clearOutput}>
             <RotateCcw className="w-4 h-4" />
           </Button>
         </div>
@@ -108,7 +99,7 @@ const Playground: React.FC = () => {
             Output
           </span>
         </div>
-        
+
         <div className="flex-1 p-3 overflow-y-auto">
           {!activeFile ? (
             <div className="text-center text-muted-foreground">
@@ -122,13 +113,13 @@ const Playground: React.FC = () => {
                   <strong>Error:</strong> {error}
                 </div>
               )}
-              
+
               {output.length === 0 && !error && !isRunning && (
                 <div className="text-muted-foreground text-center py-4">
                   Click "Run" to execute your code
                 </div>
               )}
-              
+
               {output.map((line, index) => (
                 <div key={index} className="py-0.5">
                   {line.startsWith('>') ? (
@@ -140,7 +131,7 @@ const Playground: React.FC = () => {
                   )}
                 </div>
               ))}
-              
+
               {isRunning && (
                 <div className="flex items-center text-primary">
                   <Loader2 className="w-3 h-3 mr-2 animate-spin" />
@@ -155,9 +146,7 @@ const Playground: React.FC = () => {
       {/* Status Bar */}
       <div className="p-2 border-t border-border bg-muted">
         <div className="flex items-center justify-between text-xs text-muted-foreground">
-          <span>
-            {activeFile ? `Ready: ${activeFile.split('/').pop()}` : 'No file selected'}
-          </span>
+          <span>{activeFile ? `Ready: ${activeFile.split('/').pop()}` : 'No file selected'}</span>
           <div className="flex items-center gap-2">
             {isRunning && (
               <div className="flex items-center text-primary">

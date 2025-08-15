@@ -1,6 +1,6 @@
-import { FileNode } from '@/store/ideStore';
+import { FileNode, useIDEStore } from '@/store/ideStore';
+import axios from 'axios';
 
-// Mock data - simulating remote server files
 const mockFileStructure: FileNode[] = [
   {
     id: '1',
@@ -92,7 +92,6 @@ const mockFileStructure: FileNode[] = [
   }
 ];
 
-// Mock file contents
 const mockFileContents: Record<string, string> = {
   '/src/components/Button.tsx': `import React from 'react';
 
@@ -337,40 +336,38 @@ You can learn more in the [Create React App documentation](https://facebook.gith
 // Simulate API delay
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
-// Mock API functions - replace these URLs with your actual endpoints
-export const fetchFileStructure = async (): Promise<FileNode[]> => {
-  await delay(500); // Simulate network delay
-  
-  // TODO: Replace with actual API call
-  // const response = await fetch('/api/files');
-  // return response.json();
-  
-
-  return mockFileStructure;
+export const fetchFileStructure = async (connurl: string): Promise<FileNode[]> => {
+  let files = await axios.get(`${connurl}/files`, {
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  });
+  console.log("Files fetched huhuuuuu ", files.data);
+  return files.data;
 };
 
-export const fetchFileContent = async (filePath: string): Promise<string> => {
-  await delay(300); // Simulate network delay
-  
-  // TODO: Replace with actual API call
-  // const response = await fetch(`/api/files/content?path=${encodeURIComponent(filePath)}`);
-  // return response.text();
-  
-  return mockFileContents[filePath] || `// File content for ${filePath}\n// This file is empty or not found.`;
+export const fetchFileContent = async (connuri:string,filePath: string): Promise<string> => {
+  let content = await axios.get(`${connuri}/files/content?path=${filePath}`, {
+    headers: {
+      'Content-Type': 'text/plain',
+      'Accept': 'text/plain'
+    },
+    responseType: 'text', 
+    transformResponse: res => res 
+  });
+  console.log("type of content: ", typeof content.data);
+  return content.data;
 };
 
-export const saveFileContent = async (filePath: string, content: string): Promise<void> => {
-  await delay(200);
-  
-  // TODO: Replace with actual API call
-  // await fetch(`/api/files/content`, {
-  //   method: 'PUT',
-  //   headers: { 'Content-Type': 'application/json' },
-  //   body: JSON.stringify({ path: filePath, content })
-  // });
-  
-  mockFileContents[filePath] = content;
-  console.log(`File saved: ${filePath}`);
+export const saveFileContent = async (connuri:string,filePath: string, content: string): Promise<void> => {
+  let response = await axios.post(`${connuri}/files/content?path=${filePath}`, {
+    content: content
+  });
+
+  if(response.status !== 200) {
+    throw new Error(`Failed to save file: ${response.statusText}`);
+  }
+  console.log("File saved: ", response.data);
 };
 
 export const deleteFile = async (filePath: string): Promise<void> => {
