@@ -1,6 +1,9 @@
 import type { V1Job, V1Service } from '@kubernetes/client-node';
 import { getNextJobManifest, getViteJobManifest } from './manifest/job';
-import { getNextServiceManifest, getViteServiceManifest } from './manifest/service';
+import {
+  getNextServiceManifest,
+  getViteServiceManifest,
+} from './manifest/service';
 import { getViteVirtualServiceManifest } from './manifest/virtual-service';
 import type { V1VirtualService } from './templates/virtual-service-template';
 import { PlaygroundType } from '@repo/shared/playgrounds/schema';
@@ -17,11 +20,11 @@ export const manifestRegistry: Record<PlaygroundType, ManifestGenerator> = {
     serviceManifest: getViteServiceManifest,
     virtualServiceManifest: getViteVirtualServiceManifest,
   },
-  next:{
+  next: {
     jobManifest: getNextJobManifest,
     serviceManifest: getNextServiceManifest,
-    virtualServiceManifest: getViteVirtualServiceManifest
-  }
+    virtualServiceManifest: getViteVirtualServiceManifest,
+  },
 };
 
 export function getManifestGenerator(

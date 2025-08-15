@@ -66,8 +66,6 @@ export function getViteJobManifest(userid: string, sessionid: string) {
   });
 }
 
-
-
 export function getNextJobManifest(userid: string, sessionid: string) {
   return createJobManifest({
     userId: userid,
