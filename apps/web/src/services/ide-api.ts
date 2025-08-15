@@ -1,96 +1,5 @@
-import { FileNode, useIDEStore } from '@/store/ideStore';
+import { FileNode } from '@/store/ideStore';
 import axios from 'axios';
-
-const mockFileStructure: FileNode[] = [
-  {
-    id: '1',
-    name: 'src',
-    type: 'folder',
-    path: '/src',
-    children: [
-      {
-        id: '2',
-        name: 'components',
-        type: 'folder',
-        path: '/src/components',
-        children: [
-          {
-            id: '3',
-            name: 'Button.tsx',
-            type: 'file',
-            path: '/src/components/Button.tsx',
-            language: 'typescript'
-          },
-          {
-            id: '4',
-            name: 'Header.tsx',
-            type: 'file',
-            path: '/src/components/Header.tsx',
-            language: 'typescript'
-          }
-        ]
-      },
-      {
-        id: '5',
-        name: 'utils',
-        type: 'folder',
-        path: '/src/utils',
-        children: [
-          {
-            id: '6',
-            name: 'helpers.ts',
-            type: 'file',
-            path: '/src/utils/helpers.ts',
-            language: 'typescript'
-          }
-        ]
-      },
-      {
-        id: '7',
-        name: 'App.tsx',
-        type: 'file',
-        path: '/src/App.tsx',
-        language: 'typescript'
-      },
-      {
-        id: '8',
-        name: 'index.css',
-        type: 'file',
-        path: '/src/index.css',
-        language: 'css'
-      }
-    ]
-  },
-  {
-    id: '9',
-    name: 'public',
-    type: 'folder',
-    path: '/public',
-    children: [
-      {
-        id: '10',
-        name: 'index.html',
-        type: 'file',
-        path: '/public/index.html',
-        language: 'html'
-      }
-    ]
-  },
-  {
-    id: '11',
-    name: 'package.json',
-    type: 'file',
-    path: '/package.json',
-    language: 'json'
-  },
-  {
-    id: '12',
-    name: 'README.md',
-    type: 'file',
-    path: '/README.md',
-    language: 'markdown'
-  }
-];
 
 const mockFileContents: Record<string, string> = {
   '/src/components/Button.tsx': `import React from 'react';
@@ -330,68 +239,57 @@ Builds the app for production to the \`build\` folder.
 ## Learn More
 
 You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-`
+`,
 };
 
 // Simulate API delay
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 export const fetchFileStructure = async (connurl: string): Promise<FileNode[]> => {
-  let files = await axios.get(`${connurl}/files`, {
+  const files = await axios.get<FileNode[]>(`${connurl}/files`, {
     headers: {
-      'Content-Type': 'application/json'
-    }
+      'Content-Type': 'application/json',
+    },
   });
-  console.log("Files fetched huhuuuuu ", files.data);
+  console.log('Files fetched huhuuuuu ', files.data);
   return files.data;
 };
 
-export const fetchFileContent = async (connuri:string,filePath: string): Promise<string> => {
-  let content = await axios.get(`${connuri}/files/content?path=${filePath}`, {
+export const fetchFileContent = async (connuri: string, filePath: string): Promise<string> => {
+  const content = await axios.get<string>(`${connuri}/files/content?path=${filePath}`, {
     headers: {
       'Content-Type': 'text/plain',
-      'Accept': 'text/plain'
+      Accept: 'text/plain',
     },
-    responseType: 'text', 
-    transformResponse: res => res 
+    responseType: 'text',
   });
-  console.log("type of content: ", typeof content.data);
+  console.log('type of content: ', typeof content.data);
   return content.data;
 };
 
-export const saveFileContent = async (connuri:string,filePath: string, content: string): Promise<void> => {
-  let response = await axios.post(`${connuri}/files/content?path=${filePath}`, {
-    content: content
+export const saveFileContent = async (
+  connuri: string,
+  filePath: string,
+  content: string,
+): Promise<void> => {
+  const response = await axios.post(`${connuri}/files/content?path=${filePath}`, {
+    content: content,
   });
 
-  if(response.status !== 200) {
+  if (response.status !== 200) {
     throw new Error(`Failed to save file: ${response.statusText}`);
   }
-  console.log("File saved: ", response.data);
+  console.log('File saved: ', response.data);
 };
 
 export const deleteFile = async (filePath: string): Promise<void> => {
   await delay(200);
-  
-  // TODO: Replace with actual API call
-  // await fetch(`/api/files?path=${encodeURIComponent(filePath)}`, {
-  //   method: 'DELETE'
-  // });
-  
   delete mockFileContents[filePath];
   console.log(`File deleted: ${filePath}`);
 };
 
 export const createFile = async (filePath: string, content: string = ''): Promise<void> => {
   await delay(200);
-  
-  // TODO: Replace with actual API call
-  // await fetch(`/api/files`, {
-  //   method: 'POST',
-  //   headers: { 'Content-Type': 'application/json' },
-  //   body: JSON.stringify({ path: filePath, content })
-  // });
-  
   mockFileContents[filePath] = content;
   console.log(`File created: ${filePath}`);
 };

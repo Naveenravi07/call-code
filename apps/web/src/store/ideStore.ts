@@ -29,7 +29,6 @@ interface IDEState {
   setLoading: (loading: boolean) => void;
   toggleTerminal: () => void;
   setTerminalHeight: (height: number) => void;
-  
 }
 
 export const useIDEStore = create<IDEState>((set, get) => ({
@@ -42,10 +41,9 @@ export const useIDEStore = create<IDEState>((set, get) => ({
   isTerminalOpen: false,
   terminalHeight: 200,
 
-
   setFiles: files => set({ files }),
   setConnUrl: connUrl => set({ connurl: connUrl }),
-  
+
   openFile: filePath => {
     const { openFiles, connurl } = get();
     if (!connurl) throw new Error('Invalid conn url');
@@ -89,6 +87,6 @@ export const useIDEStore = create<IDEState>((set, get) => ({
     const { isTerminalOpen } = get();
     set({ isTerminalOpen: !isTerminalOpen });
   },
-  
-  setTerminalHeight: (height) => set({ terminalHeight: height }),
+
+  setTerminalHeight: height => set({ terminalHeight: height }),
 }));
