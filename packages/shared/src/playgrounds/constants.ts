@@ -18,6 +18,7 @@ export interface Playground {
 
 export enum PlaygroundType {
   VITE = 'vite',
+  NEXT = 'next',
 }
 
 export const playgroundList : Playground[] = [
@@ -25,6 +26,14 @@ export const playgroundList : Playground[] = [
     id: PlaygroundType.VITE,
     title: 'Vite',
     description: 'Blazingly fast web framework',
+    icon: Droplet,
+    color: 'text-gray-500',
+    web: true
+  },
+  {
+    id: PlaygroundType.NEXT,
+    title: 'Next',
+    description: 'Powerful React framework',
     icon: Droplet,
     color: 'text-gray-500',
     web: true
