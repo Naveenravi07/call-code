@@ -5,7 +5,7 @@ interface JobContainer {
   image: string;
   ports?: { containerPort: number }[];
   volumeMounts?: { name: string; mountPath: string }[];
-  env?: Array<k8s.V1EnvVar>
+  env?: Array<k8s.V1EnvVar>;
   command?: string[];
 }
 
