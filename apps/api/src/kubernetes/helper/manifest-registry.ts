@@ -1,7 +1,12 @@
 import type { V1Job, V1Service } from '@kubernetes/client-node';
-import { getNextJobManifest, getViteJobManifest } from './manifest/job';
+import {
+  getNextJobManifest,
+  getSvelteJobManifest,
+  getViteJobManifest,
+} from './manifest/job';
 import {
   getNextServiceManifest,
+  getSvelteServiceManifest,
   getViteServiceManifest,
 } from './manifest/service';
 import { getViteVirtualServiceManifest } from './manifest/virtual-service';
@@ -23,6 +28,11 @@ export const manifestRegistry: Record<PlaygroundType, ManifestGenerator> = {
   next: {
     jobManifest: getNextJobManifest,
     serviceManifest: getNextServiceManifest,
+    virtualServiceManifest: getViteVirtualServiceManifest,
+  },
+  svelte: {
+    jobManifest: getSvelteJobManifest,
+    serviceManifest: getSvelteServiceManifest,
     virtualServiceManifest: getViteVirtualServiceManifest,
   },
 };

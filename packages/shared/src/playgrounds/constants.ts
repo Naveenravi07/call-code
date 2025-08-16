@@ -19,6 +19,7 @@ export interface Playground {
 export enum PlaygroundType {
   VITE = 'vite',
   NEXT = 'next',
+  SVELTE = 'svelte' 
 }
 
 export const playgroundList : Playground[] = [
@@ -34,6 +35,14 @@ export const playgroundList : Playground[] = [
     id: PlaygroundType.NEXT,
     title: 'Next',
     description: 'Powerful React framework',
+    icon: Droplet,
+    color: 'text-gray-500',
+    web: true
+  },
+  {
+    id: PlaygroundType.SVELTE,
+    title: 'Svelte',
+    description: 'Svelte is a free and open-source component-based front-end software framework',
     icon: Droplet,
     color: 'text-gray-500',
     web: true
