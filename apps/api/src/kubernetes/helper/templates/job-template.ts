@@ -5,6 +5,7 @@ interface JobContainer {
   image: string;
   ports?: { containerPort: number }[];
   volumeMounts?: { name: string; mountPath: string }[];
+  env?: Array<k8s.V1EnvVar>
   command?: string[];
 }
 
@@ -73,6 +74,7 @@ export function createJobManifest({
           containers: containers.map((container) => ({
             name: container.name,
             image: container.image,
+            env: container.env,
             command: container.command,
             ports: container.ports,
             volumeMounts: container.volumeMounts,

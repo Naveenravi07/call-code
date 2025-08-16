@@ -1,63 +1,69 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { useIDEStore } from '@/store/ideStore';
-import { X, Terminal as TerminalIcon, Minus } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import React, { useEffect, useRef } from "react";
+import { useIDEStore } from "@/store/ideStore";
+import { X, Terminal as TerminalIcon, Minus } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Terminal as XTerm } from "xterm";
+import { FitAddon } from "xterm-addon-fit";
+import "xterm/css/xterm.css";
 
 const Terminal: React.FC = () => {
-  const { isTerminalOpen, toggleTerminal } = useIDEStore();
-  const [output, setOutput] = useState<string[]>([
-    'Welcome to CodePath Terminal',
-    '$ '
-  ]);
-  const [currentInput, setCurrentInput] = useState('');
+  const { isTerminalOpen, toggleTerminal, connurl } = useIDEStore();
   const terminalRef = useRef<HTMLDivElement>(null);
+  const xtermRef = useRef<XTerm>();
+  const wsRef = useRef<WebSocket>();
 
   useEffect(() => {
-    if (terminalRef.current) {
-      terminalRef.current.scrollTop = terminalRef.current.scrollHeight;
-    }
-  }, [output]);
+    if (!isTerminalOpen || !terminalRef.current ) return;
+    if(!connurl) return
 
-  const handleCommand = (command: string) => {
-    const newOutput = [...output];
-    newOutput[newOutput.length - 1] = `$ ${command}`;
-    
-    switch (command.toLowerCase()) {
-      case 'clear':
-        setOutput(['Welcome to CodePath Terminal', '$ ']);
-        setCurrentInput('');
-        return;
-      case 'ls':
-        newOutput.push('src/', 'public/', 'package.json', 'README.md');
-        break;
-      case 'pwd':
-        newOutput.push('/workspace');
-        break;
-      case 'help':
-        newOutput.push('Available commands: ls, pwd, clear, help');
-        break;
-      default:
-        if (command.trim()) {
-          newOutput.push(`Command not found: ${command}`);
-        }
-        break;
-    }
-    
-    newOutput.push('$ ');
-    setOutput(newOutput);
-    setCurrentInput('');
-  };
+    const xterm = new XTerm({
+      cursorBlink: true,
+      fontSize: 14,
+      theme: {
+        background: "#1e1e1e",
+        foreground: "#ffffff",
+      },
+    });
+    const fitAddon = new FitAddon();
+    xterm.loadAddon(fitAddon);
+    xterm.open(terminalRef.current);
+    fitAddon.fit();
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      handleCommand(currentInput);
-    }
-  };
+    let wsUrl = connurl.replace(/^http/, "ws") + "/terminal";
+    const ws = new WebSocket(wsUrl); 
+
+    ws.onopen = () => {
+      xterm.writeln("Connected to server ✅");
+    };
+    ws.onmessage = (event) => {
+      xterm.write(event.data);
+    };
+    ws.onclose = () => {
+      xterm.writeln("\r\nConnection closed ❌");
+    };
+    ws.onerror = (err) => {
+      xterm.writeln(`\r\nError: ${JSON.stringify(err)}`);
+    };
+
+    xterm.onData((data) => {
+      ws.send(data);
+    });
+
+    xtermRef.current = xterm;
+    wsRef.current = ws;
+
+    return () => {
+      ws.close();
+      xterm.dispose();
+    };
+
+  }, [isTerminalOpen, connurl]);
 
   if (!isTerminalOpen) return null;
 
   return (
-    <div className="h-48 bg-ide-editor border-t border-ide-sidebar-border flex flex-col">
+    <div className="h-64 bg-ide-editor border-t border-ide-sidebar-border flex flex-col">
+      {/* Terminal header */}
       <div className="h-8 bg-ide-tab border-b border-ide-tab-border flex items-center justify-between px-3">
         <div className="flex items-center gap-2">
           <TerminalIcon className="w-4 h-4 text-muted-foreground" />
@@ -83,34 +89,14 @@ const Terminal: React.FC = () => {
         </div>
       </div>
 
-      <div 
+      {/* Actual terminal */}
+      <div
         ref={terminalRef}
-        className="flex-1 p-3 bg-ide-editor overflow-y-auto font-mono text-sm text-foreground"
-      >
-        {output.map((line, index) => (
-          <div key={index} className="leading-6">
-            {index === output.length - 1 && line.startsWith('$ ') ? (
-              <div className="flex items-center">
-                <span className="text-green-400">$ </span>
-                <input
-                  type="text"
-                  value={currentInput}
-                  onChange={(e) => setCurrentInput(e.target.value)}
-                  onKeyPress={handleKeyPress}
-                  className="flex-1 bg-transparent outline-none text-foreground ml-1"
-                  autoFocus
-                />
-              </div>
-            ) : line.startsWith('$ ') ? (
-              <span className="text-green-400">{line}</span>
-            ) : (
-              <span>{line}</span>
-            )}
-          </div>
-        ))}
-      </div>
+        className="flex-1 bg-ide-editor font-mono text-sm text-foreground"
+      />
     </div>
   );
 };
 
 export default Terminal;
+
