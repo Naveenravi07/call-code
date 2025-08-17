@@ -40,6 +40,7 @@ Then:
 git clone https://github.com/your-org/call-code-base-images
 cd call-code-base-images/k8_examples
 kubectl apply -f gateway.yaml
+kubectl apply -f rbac.yaml
 ```
 
 Check services:
