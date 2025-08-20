@@ -17,6 +17,8 @@ interface IDEState {
   fileContents: Record<string, string>;
   loading: boolean;
   connurl: string | null;
+  isTerminalOpen: boolean;
+  terminalHeight: number;
 
   setConnUrl: (connUrl: string) => void;
   setFiles: (files: FileNode[]) => void;
@@ -25,8 +27,8 @@ interface IDEState {
   setActiveFile: (filePath: string) => void;
   setFileContent: (filePath: string, content: string) => void;
   setLoading: (loading: boolean) => void;
-  fetchFiles: () => Promise<void>; // Add this
-  fetchFileContent: (filePath: string) => Promise<string>; // Add this
+  toggleTerminal: () => void;
+  setTerminalHeight: (height: number) => void;
 }
 
 export const useIDEStore = create<IDEState>((set, get) => ({
@@ -36,28 +38,11 @@ export const useIDEStore = create<IDEState>((set, get) => ({
   fileContents: {},
   loading: false,
   connurl: null,
+  isTerminalOpen: false,
+  terminalHeight: 200,
+
   setFiles: files => set({ files }),
-
   setConnUrl: connUrl => set({ connurl: connUrl }),
-
-  fetchFiles: async () => {
-    const { connurl } = get();
-    if (!connurl) return;
-
-    set({ setLoading: true });
-    try {
-      const files = await fetchFileStructure(connurl);
-      set({ files });
-    } catch (error) {
-      console.error('Error fetching files:', error);
-    } finally {
-      set({ filesLoading: false });
-    }
-  },
-
-  fetchFileContent: async fp => {
-
-  },
 
   openFile: filePath => {
     const { openFiles, connurl } = get();
@@ -98,4 +83,10 @@ export const useIDEStore = create<IDEState>((set, get) => ({
   },
 
   setLoading: loading => set({ loading }),
+  toggleTerminal: () => {
+    const { isTerminalOpen } = get();
+    set({ isTerminalOpen: !isTerminalOpen });
+  },
+
+  setTerminalHeight: height => set({ terminalHeight: height }),
 }));

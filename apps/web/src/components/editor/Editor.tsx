@@ -26,6 +26,8 @@ const getLanguageExtension = (filePath: string) => {
       return [css()];
     case 'json':
       return [json()];
+    case 'md':
+      return [html({ matchClosingTags: true })]; // Treat Markdown as HTML for syntax
     default:
       return [];
   }
@@ -71,15 +73,15 @@ const EditorTabs: React.FC = () => {
 };
 
 const Editor: React.FC = () => {
-  const { activeFile, fileContents, setFileContent, loading, setLoading,connurl } = useIDEStore();
+  const { activeFile, fileContents, setFileContent, loading, setLoading, connurl } = useIDEStore();
 
   useEffect(() => {
-    if(!connurl ) return
+    if (!connurl) return;
     const loadFileContent = async () => {
       if (activeFile && !fileContents[activeFile]) {
         setLoading(true);
         try {
-          const content = await fetchFileContent(connurl,activeFile);
+          const content = await fetchFileContent(connurl, activeFile);
           setFileContent(activeFile, content);
         } catch (error) {
           console.error('Error fetching file content:', error);
@@ -91,7 +93,7 @@ const Editor: React.FC = () => {
     };
 
     loadFileContent(); // eslint-disable-line
-  }, [activeFile, fileContents, setFileContent, setLoading,connurl]);
+  }, [activeFile, fileContents, setFileContent, setLoading, connurl]);
 
   const handleChange = useCallback(
     async (value: string) => {
@@ -100,7 +102,7 @@ const Editor: React.FC = () => {
         setFileContent(activeFile, value);
 
         try {
-          await saveFileContent(connurl,activeFile, value);
+          await saveFileContent(connurl, activeFile, value);
         } catch (error) {
           console.error('Error saving file:', error);
         }
@@ -108,7 +110,6 @@ const Editor: React.FC = () => {
     },
     [connurl, activeFile, setFileContent],
   );
-
 
   if (!activeFile) {
     return (
@@ -129,7 +130,9 @@ const Editor: React.FC = () => {
 
   return (
     <div className="flex-1 bg-ide-editor flex flex-col min-h-screen">
-      <EditorTabs />
+      <div className="sticky top-0 z-10 bg-ide-editor">
+        <EditorTabs />
+      </div>
 
       <div className="flex-1 relative">
         {loading && (
@@ -141,6 +144,7 @@ const Editor: React.FC = () => {
         <CodeMirror
           value={content}
           height="100%"
+          minHeight="100vh"
           theme={oneDark}
           extensions={extensions}
           onChange={handleChange} // eslint-disable-line
