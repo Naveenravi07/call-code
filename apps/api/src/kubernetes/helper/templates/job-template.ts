@@ -7,6 +7,7 @@ interface JobContainer {
   volumeMounts?: { name: string; mountPath: string }[];
   env?: Array<k8s.V1EnvVar>;
   command?: string[];
+  securityContext?: k8s.V1SecurityContext;
 }
 
 interface JobVolume {

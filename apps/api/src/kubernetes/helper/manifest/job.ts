@@ -1,4 +1,5 @@
 import { createJobManifest } from '../templates/job-template';
+import constants from './../constants/index';
 
 export function getViteJobManifest(userid: string, sessionid: string) {
   return createJobManifest({
@@ -17,11 +18,11 @@ export function getViteJobManifest(userid: string, sessionid: string) {
     initContainers: [
       {
         name: 'copy-code',
-        image: 'shastri123/callcode-vite',
+        image: constants.VITE_IMG_URL,
         command: [
           'sh',
           '-c',
-          'cp -r /usr/src/app/* /shared && cp -r /usr/src/app/.[^.]* /shared',
+          'cp -r /home/coder/workspace/* /shared && cp -r /home/coder/workspace/.[^.]* /shared',
         ],
         volumeMounts: [
           {
@@ -29,12 +30,15 @@ export function getViteJobManifest(userid: string, sessionid: string) {
             mountPath: '/shared',
           },
         ],
+        securityContext: {
+          runAsUser: 0,
+        },
       },
     ],
     containers: [
       {
         name: 'user-service',
-        image: 'shastri123/callcode-vite',
+        image: constants.VITE_IMG_URL,
         ports: [
           {
             containerPort: 5173,
@@ -43,13 +47,13 @@ export function getViteJobManifest(userid: string, sessionid: string) {
         volumeMounts: [
           {
             name: 'code-volume',
-            mountPath: '/usr/src/app',
+            mountPath: '/home/coder/workspace',
           },
         ],
       },
       {
         name: 'websocket',
-        image: 'shastri123/callcode-ws-v2:v3',
+        image: constants.WS_IMG_URL,
         ports: [
           {
             containerPort: 8080,
@@ -58,13 +62,13 @@ export function getViteJobManifest(userid: string, sessionid: string) {
         volumeMounts: [
           {
             name: 'code-volume',
-            mountPath: '/code',
+            mountPath: '/home/coder/workspace',
           },
         ],
         env: [
           {
             name: 'CODE_DIR',
-            value: '/code',
+            value: '/home/coder/workspace',
           },
           {
             name: 'CALLCODE_SESSION_NAME',
@@ -93,11 +97,11 @@ export function getSvelteJobManifest(userid: string, sessionid: string) {
     initContainers: [
       {
         name: 'copy-code',
-        image: 'shastri123/callcode-svelte:0.1',
+        image: constants.SVELTE_IMG_URL,
         command: [
           'sh',
           '-c',
-          'cp -r /usr/src/app/* /shared && cp -r /usr/src/app/.[^.]* /shared',
+          'cp -r /home/coder/workspace/* /shared && cp -r /home/coder/workspace/.[^.]* /shared',
         ],
         volumeMounts: [
           {
@@ -105,12 +109,15 @@ export function getSvelteJobManifest(userid: string, sessionid: string) {
             mountPath: '/shared',
           },
         ],
+        securityContext: {
+          runAsUser: 0,
+        },
       },
     ],
     containers: [
       {
         name: 'user-service',
-        image: 'shastri123/callcode-svelte:0.1',
+        image: constants.SVELTE_IMG_URL,
         ports: [
           {
             containerPort: 5173,
@@ -119,13 +126,13 @@ export function getSvelteJobManifest(userid: string, sessionid: string) {
         volumeMounts: [
           {
             name: 'code-volume',
-            mountPath: '/usr/src/app',
+            mountPath: '/home/coder/workspace',
           },
         ],
       },
       {
         name: 'websocket',
-        image: 'shastri123/callcode-ws-v2:v3',
+        image: constants.WS_IMG_URL,
         ports: [
           {
             containerPort: 8080,
@@ -134,13 +141,13 @@ export function getSvelteJobManifest(userid: string, sessionid: string) {
         volumeMounts: [
           {
             name: 'code-volume',
-            mountPath: '/code',
+            mountPath: '/home/coder/workspace',
           },
         ],
         env: [
           {
             name: 'CODE_DIR',
-            value: '/code',
+            value: '/home/coder/workspace',
           },
           {
             name: 'CALLCODE_SESSION_NAME',
@@ -169,11 +176,11 @@ export function getNextJobManifest(userid: string, sessionid: string) {
     initContainers: [
       {
         name: 'copy-code',
-        image: 'shastri123/callcode-next',
+        image: constants.NEXT_IMG_URL,
         command: [
           'sh',
           '-c',
-          'cp -r /usr/src/app/* /shared && cp -r /usr/src/app/.[^.]* /shared',
+          'cp -r /home/coder/workspace/* /shared && cp -r /home/coder/workspace/.[^.]* /shared',
         ],
         volumeMounts: [
           {
@@ -186,7 +193,7 @@ export function getNextJobManifest(userid: string, sessionid: string) {
     containers: [
       {
         name: 'user-service',
-        image: 'shastri123/callcode-next',
+        image: constants.NEXT_IMG_URL,
         ports: [
           {
             containerPort: 3000,
@@ -195,13 +202,13 @@ export function getNextJobManifest(userid: string, sessionid: string) {
         volumeMounts: [
           {
             name: 'code-volume',
-            mountPath: '/usr/src/app',
+            mountPath: '/home/coder/workspace',
           },
         ],
       },
       {
         name: 'websocket',
-        image: 'shastri123/callcode-ws-v2:v3',
+        image: constants.WS_IMG_URL,
         ports: [
           {
             containerPort: 8080,
@@ -210,13 +217,13 @@ export function getNextJobManifest(userid: string, sessionid: string) {
         volumeMounts: [
           {
             name: 'code-volume',
-            mountPath: '/code',
+            mountPath: '/home/coder/workspace',
           },
         ],
         env: [
           {
             name: 'CODE_DIR',
-            value: '/code',
+            value: '/home/coder/workspace',
           },
           {
             name: 'CALLCODE_SESSION_NAME',
