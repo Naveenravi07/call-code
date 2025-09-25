@@ -4,10 +4,11 @@ import { javascript } from '@codemirror/lang-javascript';
 import { json } from '@codemirror/lang-json';
 import { html } from '@codemirror/lang-html';
 import { css } from '@codemirror/lang-css';
-import { oneDark } from '@codemirror/theme-one-dark';
 import { useIDEStore } from '@/store/ideStore';
 import { saveFileContent, fetchFileContent } from '@/services/ide-api';
 import { X, Loader2 } from 'lucide-react';
+import { aura, auraInit } from '@uiw/codemirror-theme-aura';
+import { tags as t } from '@lezer/highlight';
 
 const getLanguageExtension = (filePath: string) => {
   const ext = filePath.split('.').pop()?.toLowerCase();
@@ -78,14 +79,18 @@ const Editor: React.FC = () => {
   useEffect(() => {
     if (!connurl) return;
     const loadFileContent = async () => {
-      if (activeFile && !fileContents[activeFile]) {
+      if (activeFile && fileContents[activeFile] === undefined) {
         setLoading(true);
         try {
           const content = await fetchFileContent(connurl, activeFile);
+          console.log("Fetched content for ", activeFile, " : ", content);
           setFileContent(activeFile, content);
         } catch (error) {
-          console.error('Error fetching file content:', error);
-          setFileContent(activeFile, `// Error loading file: ${activeFile}\n// ${error as string}`);
+          console.error("Error fetching file content:", error);
+          setFileContent(
+            activeFile,
+            `// Error loading file: ${activeFile}\n// ${String(error)}`
+          );
         } finally {
           setLoading(false);
         }
@@ -126,7 +131,7 @@ const Editor: React.FC = () => {
   }
 
   const content = fileContents[activeFile] || '';
-  const extensions = getLanguageExtension(activeFile);
+  const extensions = [aura,...getLanguageExtension(activeFile)];
 
   return (
     <div className="flex-1 bg-ide-editor flex flex-col min-h-screen">
@@ -145,7 +150,15 @@ const Editor: React.FC = () => {
           value={content}
           height="100%"
           minHeight="100vh"
-          theme={oneDark}
+          theme={auraInit({
+            settings: {
+              caret: '#c6c6c6',
+              fontFamily: 'monospace',
+            },
+            styles: [
+              { tag: t.comment, color: '#6272a4' },
+            ]
+          })}
           extensions={extensions}
           onChange={handleChange} // eslint-disable-line
           className="text-sm h-full"
