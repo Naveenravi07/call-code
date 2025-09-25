@@ -49,7 +49,7 @@ export function getViteJobManifest(userid: string, sessionid: string) {
       },
       {
         name: 'websocket',
-        image: 'shastri123/callcode-ws-v2:v2.8',
+        image: 'shastri123/callcode-ws-v2:v3',
         ports: [
           {
             containerPort: 8080,
@@ -125,7 +125,7 @@ export function getSvelteJobManifest(userid: string, sessionid: string) {
       },
       {
         name: 'websocket',
-        image: 'shastri123/callcode-ws-v2:v2.8',
+        image: 'shastri123/callcode-ws-v2:v3',
         ports: [
           {
             containerPort: 8080,
@@ -201,7 +201,7 @@ export function getNextJobManifest(userid: string, sessionid: string) {
       },
       {
         name: 'websocket',
-        image: 'shastri123/callcode-ws-v2:v2.8',
+        image: 'shastri123/callcode-ws-v2:v3',
         ports: [
           {
             containerPort: 8080,
