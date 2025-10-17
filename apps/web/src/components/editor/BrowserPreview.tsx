@@ -10,6 +10,7 @@ function stripWsSubdomain(url: string): string {
   if (hostname.startsWith('ws.')) {
     hostname = hostname.slice(3);
   }
+  // Remove /api from the path if present
   return `${parsed.protocol}//${hostname}`;
 }
 

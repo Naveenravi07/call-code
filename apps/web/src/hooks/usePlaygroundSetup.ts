@@ -116,13 +116,25 @@ export const usePlaygroundSetup = (sessionName: string | undefined) => {
 
     const checkBrowserPreview = async (): Promise<void> => {
       try {
-        const previewUrl = connurl.replace(/^http:\/\/ws\./, 'http://');
-        const response = await fetch(previewUrl, { method: 'HEAD' });
-        if (response.ok || response.status === 404) {
-          console.log('Browser preview is ready');
-          setBrowserPreviewReady(true);
-        }
-      } catch {
+        // Remove /api from connurl and strip ws. subdomain
+        const previewUrl = connurl.replace(/^http:\/\/ws\./, 'http://').replace(/\/api$/, '');
+
+        console.log('Checking browser preview at:', previewUrl);
+
+        // Use no-cors mode to avoid CORS issues during the check
+        // We just want to know if the server responds, not read the response
+        const response = await fetch(previewUrl, {
+          method: 'GET',
+          mode: 'no-cors',
+          cache: 'no-cache',
+        });
+
+        // In no-cors mode, response.type will be 'opaque' if server responded
+        // We can't read status, but if we get here without error, server is up
+        console.log('Browser preview is ready (response type:', response.type, ')');
+        setBrowserPreviewReady(true);
+      } catch (error) {
+        console.log('Browser preview not ready yet:', error);
         // Keep retrying until dev server is up
         setTimeout(() => {
           void checkBrowserPreview();
