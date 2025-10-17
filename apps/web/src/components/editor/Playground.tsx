@@ -70,7 +70,7 @@ const Playground: React.FC = () => {
           <Button
             variant="default"
             size="sm"
-            onClick={runCode}
+            onClick={() => void runCode()}
             disabled={isRunning || !activeFile}
             className="flex-1"
           >

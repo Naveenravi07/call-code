@@ -13,15 +13,26 @@ export interface FileNode {
   language?: string;
 }
 
+export interface TerminalInstance {
+  id: string;
+  name: string;
+  isDefault: boolean;
+  pendingCommands?: string[];
+}
+
 interface IDEState {
   files: FileNode[];
   openFiles: string[];
   activeFile: string | null;
   fileContents: Record<string, string>;
+  fileScrollPositions: Record<string, number>;
   loading: boolean;
   connurl: string | null;
   isTerminalOpen: boolean;
   terminalHeight: number;
+  terminals: TerminalInstance[];
+  activeTerminalId: string | null;
+  isBrowserPreviewReady: boolean;
   clipboard: { node: FileNode; operation: 'copy' | 'cut' } | null;
 
   setConnUrl: (connUrl: string) => void;
@@ -30,9 +41,15 @@ interface IDEState {
   closeFile: (filePath: string) => void;
   setActiveFile: (filePath: string) => void;
   setFileContent: (filePath: string, content: string) => void;
+  setFileScrollPosition: (filePath: string, position: number) => void;
   setLoading: (loading: boolean) => void;
   toggleTerminal: () => void;
+  addTerminal: () => void;
+  addTerminalWithCommands: (commands: string[]) => void;
+  closeTerminal: (id: string) => void;
+  setActiveTerminal: (id: string) => void;
   setTerminalHeight: (height: number) => void;
+  setBrowserPreviewReady: (ready: boolean) => void;
   createFile: (parentPath: string, name: string) => Promise<void>;
   createFolder: (parentPath: string, name: string) => Promise<void>;
   renameNode: (oldPath: string, newName: string) => Promise<void>;
@@ -47,10 +64,14 @@ export const useIDEStore = create<IDEState>((set, get) => ({
   openFiles: [],
   activeFile: null,
   fileContents: {},
+  fileScrollPositions: {},
   loading: false,
   connurl: null,
   isTerminalOpen: false,
   terminalHeight: 200,
+  terminals: [],
+  activeTerminalId: null,
+  isBrowserPreviewReady: false,
   clipboard: null,
 
   setFiles: files => set({ files }),
@@ -94,13 +115,92 @@ export const useIDEStore = create<IDEState>((set, get) => ({
     });
   },
 
+  setFileScrollPosition: (filePath, position) => {
+    const { fileScrollPositions } = get();
+    set({
+      fileScrollPositions: { ...fileScrollPositions, [filePath]: position },
+    });
+  },
+
   setLoading: loading => set({ loading }),
   toggleTerminal: () => {
-    const { isTerminalOpen } = get();
-    set({ isTerminalOpen: !isTerminalOpen });
+    const { isTerminalOpen, terminals } = get();
+    if (!isTerminalOpen) {
+      // Opening terminal - create terminal if none exist
+      if (terminals.length === 0) {
+        const terminalId = generateId();
+        const newTerminal: TerminalInstance = {
+          id: terminalId,
+          name: 'Terminal 1',
+          isDefault: false,
+        };
+        set({
+          isTerminalOpen: true,
+          terminals: [newTerminal],
+          activeTerminalId: terminalId,
+        });
+      } else {
+        set({ isTerminalOpen: true });
+      }
+    } else {
+      // Closing terminal
+      set({ isTerminalOpen: false });
+    }
+  },
+
+  addTerminal: () => {
+    const { terminals } = get();
+    const newTerminal: TerminalInstance = {
+      id: generateId(),
+      name: `Terminal ${terminals.length + 1}`,
+      isDefault: false,
+    };
+    set({
+      terminals: [...terminals, newTerminal],
+      activeTerminalId: newTerminal.id,
+      isTerminalOpen: true,
+    });
+  },
+
+  addTerminalWithCommands: (commands: string[]) => {
+    const { terminals } = get();
+    const newTerminal: TerminalInstance = {
+      id: generateId(),
+      name: 'Terminal 1',
+      isDefault: false,
+      pendingCommands: commands,
+    };
+    set({
+      terminals: [...terminals, newTerminal],
+      activeTerminalId: newTerminal.id,
+      isTerminalOpen: true,
+    });
+  },
+
+  closeTerminal: (id: string) => {
+    const { terminals, activeTerminalId } = get();
+
+    const newTerminals = terminals.filter(t => t.id !== id);
+
+    let newActiveId = activeTerminalId;
+    if (activeTerminalId === id) {
+      newActiveId = newTerminals.length > 0 ? newTerminals[newTerminals.length - 1].id : null;
+    }
+
+    set({
+      terminals: newTerminals,
+      activeTerminalId: newActiveId,
+      isTerminalOpen: newTerminals.length > 0,
+    });
+  },
+
+  setActiveTerminal: (id: string) => {
+    set({ activeTerminalId: id });
   },
 
   setTerminalHeight: height => set({ terminalHeight: height }),
+
+  setBrowserPreviewReady: ready => set({ isBrowserPreviewReady: ready }),
 
   createFile: async (parentPath: string, name: string): Promise<void> => {
     const { connurl } = get();

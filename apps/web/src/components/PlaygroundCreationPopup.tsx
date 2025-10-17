@@ -26,27 +26,30 @@ export default function PlayGroundCreationPopUp({ isOpen, onClose }: PlayGroundC
     setSelectedMeetingType(typeId);
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     if (selectedMeetingType) {
       console.log('Creating meeting:', { type: selectedMeetingType });
 
-      await instance
+      void instance
         .post('/playgrounds/create', {
           playground: selectedMeetingType,
         })
         .then(resp => {
-          let response = playGroundCreationResponseSchema.parse(resp.data)
+          const response = playGroundCreationResponseSchema.parse(resp.data);
           navigate({
             to: '/playground',
             search: {
               session_name: response.session_name,
             },
           });
+          setSelectedMeetingType(null);
+          onClose();
         })
-        .catch(err => console.error(err));
-
-      setSelectedMeetingType(null);
-      onClose();
+        .catch(err => {
+          console.error(err);
+          setSelectedMeetingType(null);
+          onClose();
+        });
     }
   };
 
