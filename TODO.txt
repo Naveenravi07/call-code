@@ -1,3 +1,0 @@
-1.  Rn the SSE endpoint for fetching playground info dosent return the url for the connection. We should add a crawler or something which crawl on the 
-    predicted url and only if it found both the services running then only make the job ready to true 
-

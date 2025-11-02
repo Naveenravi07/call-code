@@ -28,19 +28,11 @@ export default function LoginPage() {
         <div className="space-y-4">
           <Separator>or sign in with</Separator>
           <div className="flex flex-col gap-2">
-            <Button
-              onClick={() => void loginWithGithub()}
-              variant="outline"
-              className="w-full"
-            >
+            <Button onClick={() => void loginWithGithub()} variant="outline" className="w-full">
               <GitlabIcon className="h-5 w-5 mr-2" />
               Sign in with GitHub
             </Button>
-            <Button
-              onClick={() => void loginWithGoogle()}
-              variant="outline"
-              className="w-full"
-            >
+            <Button onClick={() => void loginWithGoogle()} variant="outline" className="w-full">
               <ChromeIcon className="h-5 w-5 mr-2" />
               Sign in with Google
             </Button>

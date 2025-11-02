@@ -1,18 +1,18 @@
-"use client"
+'use client';
 
-import type React from "react"
-import type { FileNode } from "@/store/ideStore"
-import { File, Folder, Edit, Trash2 } from "lucide-react"
+import type React from 'react';
+import type { FileNode } from '@/store/ideStore';
+import { File, Folder, Edit, Trash2 } from 'lucide-react';
 
 interface ContextMenuProps {
-  x: number
-  y: number
-  node: FileNode | null
-  onClose: () => void
-  onCreateFile: (parentPath: string) => void
-  onCreateFolder: (parentPath: string) => void
-  onRename: (node: FileNode) => void
-  onDelete: (node: FileNode) => void
+  x: number;
+  y: number;
+  node: FileNode | null;
+  onClose: () => void;
+  onCreateFile: (parentPath: string) => void;
+  onCreateFolder: (parentPath: string) => void;
+  onRename: (node: FileNode) => void;
+  onDelete: (node: FileNode) => void;
 }
 
 const ContextMenu: React.FC<ContextMenuProps> = ({
@@ -26,18 +26,18 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
   onDelete,
 }) => {
   const handleAction = (action: () => void) => {
-    action()
-    onClose()
-  }
+    action();
+    onClose();
+  };
 
-  const isFolder = node?.type === "folder"
-  const targetPath = isFolder ? node.path : node?.path.split("/").slice(0, -1).join("/") || ""
+  const isFolder = node?.type === 'folder';
+  const targetPath = isFolder ? node.path : node?.path.split('/').slice(0, -1).join('/') || '';
 
   return (
     <div
       className="fixed z-50 bg-background border border-border rounded-md shadow-lg py-1 min-w-[160px]"
       style={{ left: x, top: y }}
-      onContextMenu={(e) => e.preventDefault()}
+      onContextMenu={e => e.preventDefault()}
     >
       <button
         className="w-full px-3 py-2 text-left text-sm hover:bg-accent hover:text-accent-foreground flex items-center gap-2"
@@ -95,7 +95,7 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
         </>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default ContextMenu
+export default ContextMenu;

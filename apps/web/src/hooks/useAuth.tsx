@@ -8,7 +8,7 @@ const useAuth = () => {
     queryKey: ['user'],
     queryFn: async () => {
       const data = await getUserData();
-      return data ;
+      return data;
     },
     retry: false,
   });

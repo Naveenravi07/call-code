@@ -1,40 +1,48 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { RefreshCw, ExternalLink, Globe } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useIDEStore } from '@/store/ideStore';
 
 function stripWsSubdomain(url: string): string {
-    const parsed = new URL(url);
-    let hostname = parsed.hostname;
-    if (hostname.startsWith("ws.")) {
-      hostname = hostname.slice(3);
-    }
-    return `${parsed.protocol}//${hostname}`;
+  const parsed = new URL(url);
+  let hostname = parsed.hostname;
+  if (hostname.startsWith('ws.')) {
+    hostname = hostname.slice(3);
   }
-  
+  // Remove /api from the path if present
+  return `${parsed.protocol}//${hostname}`;
+}
+
 const BrowserPreview: React.FC = () => {
-  const {connurl} = useIDEStore.getState()
+  const { connurl, isBrowserPreviewReady } = useIDEStore();
   const [url, setUrl] = useState('');
   const [currentUrl, setCurrentUrl] = useState('');
+  const iframeRef = useRef<HTMLIFrameElement>(null);
 
   const handleNavigate = () => {
     setCurrentUrl(url);
   };
 
   const handleRefresh = () => {
-    const iframe = document.getElementById('preview-iframe') as HTMLIFrameElement;
-    if (iframe) {
-      iframe.src = iframe.src;
+    if (iframeRef.current) {
+      const currentSrc = iframeRef.current.src;
+      iframeRef.current.src = currentSrc;
     }
-  }
-  
-  useEffect(() => {;
-    if(!connurl) return;
-    let previewUrl = stripWsSubdomain(connurl);
+  };
+
+  useEffect(() => {
+    if (!connurl) return;
+    const previewUrl = stripWsSubdomain(connurl);
     setUrl(previewUrl);
     setCurrentUrl(previewUrl);
-  },[connurl])
+  }, [connurl]);
+
+  useEffect(() => {
+    if (isBrowserPreviewReady && iframeRef.current && currentUrl) {
+      iframeRef.current.src = currentUrl;
+    }
+  }, [isBrowserPreviewReady, currentUrl]);
 
   return (
     <div className="w-full h-full bg-ide-sidebar border-l border-ide-sidebar-border flex flex-col">
@@ -52,17 +60,12 @@ const BrowserPreview: React.FC = () => {
           <Input
             type="url"
             value={url}
-            onChange={(e) => setUrl(e.target.value)}
+            onChange={e => setUrl(e.target.value)}
             placeholder="Enter URL..."
             className="flex-1 text-sm"
-            onKeyPress={(e) => e.key === 'Enter' && handleNavigate()}
+            onKeyDown={e => e.key === 'Enter' && handleNavigate()}
           />
-          <Button
-            onClick={handleRefresh}
-            variant="outline"
-            size="sm"
-            className="px-2"
-          >
+          <Button onClick={handleRefresh} variant="outline" size="sm" className="px-2">
             <RefreshCw className="w-4 h-4" />
           </Button>
           <Button
@@ -77,9 +80,17 @@ const BrowserPreview: React.FC = () => {
       </div>
 
       {/* Preview Area */}
-      <div className="flex-1 bg-white">
+      <div className="flex-1 bg-white relative">
+        {!isBrowserPreviewReady && (
+          <div className="absolute inset-0 flex items-center justify-center bg-gray-100 dark:bg-gray-900">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+              <p className="text-sm text-muted-foreground">Waiting for preview server...</p>
+            </div>
+          </div>
+        )}
         <iframe
-          id="preview-iframe"
+          ref={iframeRef}
           src={currentUrl}
           className="w-full h-full border-0"
           title="Preview"
@@ -89,9 +100,7 @@ const BrowserPreview: React.FC = () => {
 
       {/* Status Bar */}
       <div className="h-6 bg-ide-tab border-t border-ide-tab-border flex items-center px-3">
-        <span className="text-xs text-muted-foreground truncate">
-          {currentUrl}
-        </span>
+        <span className="text-xs text-muted-foreground truncate">{currentUrl}</span>
       </div>
     </div>
   );

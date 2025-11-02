@@ -1,5 +1,5 @@
-import React, { useCallback, useEffect } from 'react';
-import CodeMirror from '@uiw/react-codemirror';
+import React, { useCallback, useEffect, useRef } from 'react';
+import CodeMirror, { ReactCodeMirrorRef } from '@uiw/react-codemirror';
 import { javascript } from '@codemirror/lang-javascript';
 import { json } from '@codemirror/lang-json';
 import { html } from '@codemirror/lang-html';
@@ -14,23 +14,66 @@ const getLanguageExtension = (filePath: string) => {
   const ext = filePath.split('.').pop()?.toLowerCase();
 
   switch (ext) {
+    // JavaScript variants
     case 'js':
     case 'jsx':
+    case 'mjs':
+    case 'cjs':
+      return [javascript({ jsx: true })];
+
+    // TypeScript variants
     case 'ts':
     case 'tsx':
-      return [javascript({ jsx: true, typescript: ext.includes('ts') })];
+    case 'mts':
+    case 'cts':
+      return [javascript({ jsx: true, typescript: true })];
+
+    // HTML and templates
     case 'html':
+    case 'htm':
+    case 'svelte':
+    case 'vue':
       return [html()];
+
+    // CSS variants
     case 'css':
     case 'scss':
     case 'sass':
+    case 'less':
       return [css()];
+
+    // JSON variants
     case 'json':
+    case 'jsonc':
+    case 'json5':
       return [json()];
+
+    // Markdown
     case 'md':
-      return [html({ matchClosingTags: true })]; // Treat Markdown as HTML for syntax
-    default:
+    case 'markdown':
+    case 'mdx':
+      return [html({ matchClosingTags: true })];
+
+    // Config files (treat as JSON)
+    case 'babelrc':
+    case 'eslintrc':
+    case 'prettierrc':
+      return [json()];
+
+    default: {
+      // Check for dotfiles or config files
+      const fileName = filePath.split('/').pop() || '';
+      if (
+        fileName.startsWith('.') &&
+        (fileName.includes('rc') ||
+          fileName.includes('config') ||
+          fileName === '.env' ||
+          fileName === '.gitignore')
+      ) {
+        return []; // Plain text for config files
+      }
       return [];
+    }
   }
 };
 
@@ -74,7 +117,18 @@ const EditorTabs: React.FC = () => {
 };
 
 const Editor: React.FC = () => {
-  const { activeFile, fileContents, setFileContent, loading, setLoading, connurl } = useIDEStore();
+  const {
+    activeFile,
+    fileContents,
+    setFileContent,
+    loading,
+    setLoading,
+    connurl,
+    fileScrollPositions,
+    setFileScrollPosition,
+  } = useIDEStore();
+  const editorRef = useRef<ReactCodeMirrorRef>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!connurl) return;
@@ -83,34 +137,52 @@ const Editor: React.FC = () => {
         setLoading(true);
         try {
           const content = await fetchFileContent(connurl, activeFile);
-          console.log("Fetched content for ", activeFile, " : ", content);
+          console.log('Fetched content for ', activeFile, ' : ', content);
           setFileContent(activeFile, content);
         } catch (error) {
-          console.error("Error fetching file content:", error);
-          setFileContent(
-            activeFile,
-            `// Error loading file: ${activeFile}\n// ${String(error)}`
-          );
+          console.error('Error fetching file content:', error);
+          setFileContent(activeFile, `// Error loading file: ${activeFile}\n// ${String(error)}`);
         } finally {
           setLoading(false);
         }
       }
     };
 
-    loadFileContent(); // eslint-disable-line
+    void loadFileContent();
   }, [activeFile, fileContents, setFileContent, setLoading, connurl]);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      if (activeFile && containerRef.current) {
+        const scrollTop = containerRef.current.scrollTop;
+        setFileScrollPosition(activeFile, scrollTop);
+      }
+    };
+
+    const container = containerRef.current;
+    if (container) {
+      container.addEventListener('scroll', handleScroll);
+      return () => container.removeEventListener('scroll', handleScroll);
+    }
+  }, [activeFile, setFileScrollPosition]);
+
+  useEffect(() => {
+    if (activeFile && containerRef.current) {
+      const savedPosition = fileScrollPositions[activeFile] || 0;
+      containerRef.current.scrollTop = savedPosition;
+      console.log(`Restored scroll position for ${activeFile}: ${savedPosition}`);
+    }
+  }, [activeFile, fileScrollPositions]);
+
   const handleChange = useCallback(
-    async (value: string) => {
+    (value: string) => {
       if (!connurl) return;
       if (activeFile) {
         setFileContent(activeFile, value);
 
-        try {
-          await saveFileContent(connurl, activeFile, value);
-        } catch (error) {
+        void saveFileContent(connurl, activeFile, value).catch(error => {
           console.error('Error saving file:', error);
-        }
+        });
       }
     },
     [connurl, activeFile, setFileContent],
@@ -131,15 +203,15 @@ const Editor: React.FC = () => {
   }
 
   const content = fileContents[activeFile] || '';
-  const extensions = [aura,...getLanguageExtension(activeFile)];
+  const extensions = [aura, ...getLanguageExtension(activeFile)];
 
   return (
-    <div className="flex-1 bg-ide-editor flex flex-col min-h-screen">
+    <div ref={containerRef} className="flex-1 bg-ide-editor flex flex-col h-full overflow-auto">
       <div className="sticky top-0 z-10 bg-ide-editor">
         <EditorTabs />
       </div>
 
-      <div className="flex-1 relative">
+      <div className="flex-1 relative min-h-full">
         {loading && (
           <div className="absolute inset-0 bg-background/50 flex items-center justify-center z-10">
             <Loader2 className="w-8 h-8 animate-spin text-primary" />
@@ -147,20 +219,18 @@ const Editor: React.FC = () => {
         )}
 
         <CodeMirror
+          ref={editorRef}
           value={content}
           height="100%"
-          minHeight="100vh"
           theme={auraInit({
             settings: {
               caret: '#c6c6c6',
               fontFamily: 'monospace',
             },
-            styles: [
-              { tag: t.comment, color: '#6272a4' },
-            ]
+            styles: [{ tag: t.comment, color: '#6272a4' }],
           })}
           extensions={extensions}
-          onChange={handleChange} // eslint-disable-line
+          onChange={handleChange}
           className="text-sm h-full"
           basicSetup={{
             lineNumbers: true,
